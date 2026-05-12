@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] **Smoke test local install in a fresh Claude Code session** - run `/plugin marketplace add /Users/simonsangla/projects/simon-productivity` then `/plugin install simon-productivity`, then `/simon-productivity:start` in a test directory; confirm all four skills resolve. Skip if the currently-running session already has the cache-installed copy (risk of conflict).
+- [ ] **Re-run smoke test against v0.2.1** - after the dashboard/normal-init fix, repeat Test B in a fresh Claude session. Pass criteria: scaffold ends with clean working tree (no untracked dashboard.html, no untracked TASKS.md, no untracked memory/), and a second `/simon-productivity:start` run in the same dir opts into plugin-dev init explicitly. **Note**: cache lag — must be a fresh session that installs from the repo path, since the session-local agent-mode-sessions cache pins to an older snapshot.
 
 ## Waiting On
 
@@ -21,3 +21,4 @@
 - [x] ~~**Wire CI**~~ - `.github/workflows/ci.yml` validates JSON manifests + SKILL.md frontmatter; green on first run (2026-05-12)
 - [x] ~~**Migrate plugin source into this repo**~~ - ported `start`, `update`, `task-management`, `memory-management` SKILL.md files + `dashboard.html` + `CONNECTORS.md` + `.mcp.json` from local plugin cache; bumped manifest to v0.1.0 (2026-05-12, PR #2)
 - [x] ~~**Teach `start` to scaffold new plugin repos**~~ - added "Plugin source" track with `plugin` arg trigger; templates at `skills/start/templates/` mirror this repo's bootstrap state with `{{PLACEHOLDER}}` substitution. Bumped manifest to v0.2.0 (2026-05-12, PR #3)
+- [x] ~~**Fix smoke-test findings on Plugin source track**~~ - dropped root-level `dashboard.html` from plugin-dev init (canonical location is `skills/dashboard.html` after PR #2); decoupled scaffold from auto-init so scaffold commit lands with a clean working tree; users opt into plugin-dev TASKS/memory by re-running `start` (no args). Bumped to v0.2.1 (2026-05-12, PR #4)

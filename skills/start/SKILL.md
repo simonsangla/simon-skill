@@ -30,9 +30,9 @@ State the detected track to Simon up front.
 
 A **Claude Code plugin source repo**. Two sub-cases:
 
-**A. `.claude-plugin/plugin.json` already exists** — repo is an established plugin. Skip scaffold. Run plugin-dev init: ensure `TASKS.md`, `CLAUDE.md`, `memory/`, and `dashboard.html` (at repo root, for plugin-dev convenience) exist. Same as Generic from this point on.
+**A. `.claude-plugin/plugin.json` already exists** — repo is an established plugin. Skip scaffold. Run plugin-dev init: ensure `TASKS.md`, `CLAUDE.md`, and `memory/` exist at repo root for plugin-dev backlog tracking. **Do NOT create a root-level `dashboard.html`** — for plugin repos, the dashboard (if any) is a plugin asset at `skills/dashboard.html` that ships with the plugin. If Simon wants the visual board, he opens `skills/dashboard.html` directly. The "Open the dashboard" step (§4) is skipped for this track.
 
-**B. User passed `plugin` argument AND `.claude-plugin/` is absent** — bootstrap a new plugin repo. Run the scaffold steps below before normal init.
+**B. User passed `plugin` argument AND `.claude-plugin/` is absent** — bootstrap a new plugin repo. Run the scaffold steps below. **Do not continue into the normal init flow afterward** — scaffold ends with a clean working tree; user opts into plugin-dev init by running `/simon-productivity:start` again (no args) when they want TASKS.md + memory/ created.
 
 #### Scaffold steps (sub-case B only)
 
@@ -91,8 +91,9 @@ Treat this as a `repo-bootstrap`-style operation. Templates live at `${CLAUDE_PL
 7. **Surface follow-ups** (do not auto-execute):
    - Branch protection requires public repo or GitHub Pro. If repo is private on free plan, note this and tell Simon to flip via `gh repo edit --visibility public` when ready.
    - Recommend opening PR-mode workflow from this point: every subsequent change goes via branch + PR, no direct push to main.
+   - Tell Simon: "Scaffold done. Run `/simon-productivity:start` again (no args) when you want a plugin-dev TASKS.md + memory/ at repo root, or just start adding skills under `skills/<name>/SKILL.md` first."
 
-After scaffolding completes, continue with the normal init flow (TASKS.md, memory/, dashboard.html at repo root for plugin-dev convenience). The repo is now a "Plugin source" track (sub-case A on next invocation).
+**Stop after step 7.** Do NOT chain into the normal init flow. The scaffold commit must leave a clean working tree. Sub-case A (next invocation) handles plugin-dev init separately.
 
 ### 2. Check what exists
 
@@ -108,12 +109,15 @@ Also check the parent `/Users/simonsangla/projects/CLAUDE.md` (root-level cross-
 ### 3. Create what's missing
 
 - **`TASKS.md` missing:** Create from the `task-management` skill template. Place it in the working directory.
-- **`dashboard.html` missing:** Copy it from `${CLAUDE_PLUGIN_ROOT}/skills/dashboard.html` into the working directory.
+- **`dashboard.html` missing:** Copy it from `${CLAUDE_PLUGIN_ROOT}/skills/dashboard.html` into the working directory. **Skip this for the Plugin source track** — plugin repos don't get a root-level dashboard.html; the dashboard ships as a plugin asset under `skills/`.
 - **`CLAUDE.md` + `memory/` missing:** First-run. Continue to step 6 (bootstrap) after opening the dashboard.
 
 ### 4. Open the dashboard
 
-Do NOT run `open` or `xdg-open` — Claude runs sandboxed and shell-open commands won't reach the user's browser. Tell Simon: "Dashboard ready at `dashboard.html` in the [track] working dir. Open it from Finder or your file browser."
+Do NOT run `open` or `xdg-open` — Claude runs sandboxed and shell-open commands won't reach the user's browser.
+
+- For **Plugin source** track: skip this step. Plugin repos don't get a root-level dashboard; if a `skills/dashboard.html` exists in the plugin, mention "Plugin includes a dashboard at `skills/dashboard.html` — open it from Finder if useful." Otherwise say nothing.
+- For all other tracks: tell Simon: "Dashboard ready at `dashboard.html` in the [track] working dir. Open it from Finder or your file browser."
 
 ### 5. Orient the user
 
