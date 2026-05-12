@@ -1,6 +1,6 @@
 # Connectors
 
-This plugin is pre-wired for Simon's actual stack. The `start` and `update` skills name concrete tools (Gmail, Google Calendar, Vercel, GitHub, etc.) rather than generic categories. Where a remote MCP isn't connected, skills fall back to a CLI shell-out (`gh`) or skip the source.
+The `start` and `update` skills name concrete tools (Gmail, Google Calendar, Vercel, GitHub, etc.) rather than generic categories. Where a remote MCP isn't connected, skills fall back to a CLI shell-out (`gh`) or skip the source.
 
 ## Connector map
 
@@ -8,33 +8,30 @@ This plugin is pre-wired for Simon's actual stack. The `start` and `update` skil
 |---|---|---|---|
 | Email | Gmail | Cowork bundled MCP | start, update |
 | Calendar | Google Calendar | Cowork bundled MCP | start, update |
-| Documents / files | Google Drive | Cowork bundled MCP | start, update (Job_Search / jobs / job_utils folders) |
-| Notes | Apple Notes | Cowork bundled MCP (desktop only) | start, update (Lab pile, Pompt Library) |
-| Deployments | Vercel | Cowork bundled MCP | update (Carcassonne, simon-platform apps, MetricPilot) |
+| Documents / files | Google Drive | Cowork bundled MCP | start, update |
+| Notes | Apple Notes | Cowork bundled MCP (desktop only) | start, update |
+| Deployments | Vercel | Cowork bundled MCP | update |
 | Design | Figma | Cowork bundled MCP | update (optional) |
-| Issues / PRs | GitHub | No remote MCP — `gh issue list --assignee=@me`, `gh pr list --author=@me` | update (simon-platform repo work) |
+| Issues / PRs | GitHub | No remote MCP — `gh issue list --assignee=@me`, `gh pr list --author=@me` | update |
 | Tickets | Linear | Remote MCP (optional) | update (if used) |
 | Library docs | Context7 | Remote MCP | dev skills |
-| Chat | Slack | Remote MCP (not currently used by Simon) | update (skipped if not connected) |
-| Knowledge base | Notion | Remote MCP (not currently used) | update (skipped if not connected) |
-| Project tracker | Asana / Atlassian / monday.com / ClickUp / MS365 | Remote MCPs (not currently used) | update (skipped if not connected) |
+| Chat | Slack | Remote MCP | update (skipped if not connected) |
+| Knowledge base | Notion | Remote MCP | update (skipped if not connected) |
+| Project tracker | Asana / Atlassian / monday.com / ClickUp / MS365 | Remote MCPs | update (skipped if not connected) |
 
-## Track-aware behavior
+## How scope is decided
 
-The plugin recognizes Simon's three concurrent tracks. The `start` and `update` skills detect the active working directory and scope their checks accordingly:
+The skills are **folder-agnostic** — they operate on the current working directory and inherit context from any parent `CLAUDE.md` they can find on the upward walk. Per-folder scoping (which Gmail people to search for, which Drive folders to check, which GitHub repos to prioritize, which Vercel projects matter) comes from those inherited `CLAUDE.md` files, not from hard-coded paths in the skill.
 
-| Track | Working dir | Key external surfaces |
-|---|---|---|
-| Job search | `/Users/simonsangla/projects/job/job/` | Gmail (recruiter threads), Calendar (interview slots, IEFP), Drive (`Job_Search`, `jobs`, `job_utils`), Apple Notes |
-| MetricPilot | `/Users/simonsangla/projects/metricpilot/` | Vercel (deploys), Gmail (customer conversations), Drive |
-| simon-platform | `/Users/simonsangla/projects/simon-ops/simon-platform/` | GitHub (`gh`), Vercel (per-app previews), Calendar |
-| Workspace root | `/Users/simonsangla/projects/` | All of the above |
+If the current folder has no parent `CLAUDE.md`, the skills fall back to broad sweeps (last 7 days everywhere; broad Drive listings; all GitHub assignments) and let the user filter the surfaced items.
 
-If the working dir is none of these, the skills run in generic mode (just `TASKS.md` + memory in CWD).
+## Hard-rule gates and verification policies
 
-## Compliance gate
+The `update` skill respects any **hard rule** declared by a parent `CLAUDE.md` — a compliance gate, regulatory check, authorization requirement, or anything explicitly marked as gated. If a task or external message looks like it might trip such a rule, the skill flags it rather than auto-completing, and quotes the rule text from the parent file so the user can see exactly what they need to confirm.
 
-The `update` skill is aware of Simon's Scenario A compliance gate (IEFP green light → AT atividade independente open → Seg Social notified within 5 working days → monthly billing < €767 brut). If it sees a task or email proposing acceptance of paid work, it flags it rather than auto-completing — and references `/Users/simonsangla/projects/CLAUDE.md` for the hard rule.
+Same idea for verification policies: if a parent `CLAUDE.md` declares what evidence a "done" claim requires (test logs, preview URL, deploy status, etc.), the skill flags any Active task claimed as done without that evidence.
+
+The skills never invent rules the parent doesn't declare, and never silently skip rules the parent does declare.
 
 ## Connecting / disconnecting tools
 

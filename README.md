@@ -1,6 +1,6 @@
 # simon-productivity
 
-Forked from Anthropic's `productivity` plugin and customized for Simon Sangla's three-track setup (job search + MetricPilot + simon-platform). Same `TASKS.md` + working memory + dashboard pattern, but the `start` and `update` skills are rewired around Simon's actual connectors (Google trio, Apple Notes, Vercel, GitHub via `gh`, Figma, Linear, Context7) and aware of the hard compliance rules (Scenario A) and the §1–§7 execution rules of simon-platform.
+Forked from Anthropic's `productivity` plugin. Same `TASKS.md` + working memory + dashboard pattern, but the `start` and `update` skills are rewired around a concrete connector stack (Gmail, Google Calendar, Google Drive, Apple Notes, Vercel, GitHub via `gh`, Figma, Linear, Context7) and made **folder-agnostic** — they operate on whatever directory you invoke them from and inherit context (people, projects, compliance gates, verification policies) from any parent `CLAUDE.md` on the upward walk, rather than from hard-coded paths.
 
 ## Installation
 
@@ -22,8 +22,8 @@ Once the repo is flipped to public:
 
 | Command | What it does |
 |---------|--------------|
-| `/simon-productivity:start` | Detect which track you're in, initialize tasks + memory if missing, open the dashboard, do an optional bootstrap scan across Gmail / Calendar / Drive / Apple Notes / Vercel / GitHub. |
-| `/simon-productivity:update` | Sync tasks from GitHub (`gh issue list --assignee=@me`), Vercel build status, optionally Linear; scan Gmail / Calendar / Drive / Notes for new action items; triage stale tasks; fill memory gaps; flag any compliance-gate violations. |
+| `/simon-productivity:start` | Initialize tasks + memory in the current folder if missing, open the dashboard, do an optional bootstrap scan across Gmail / Calendar / Drive / Apple Notes / Vercel / GitHub. Inherits context from parent CLAUDE.md files. |
+| `/simon-productivity:update` | Sync tasks from GitHub (`gh issue list --assignee=@me`), Vercel build status, optionally Linear; scan Gmail / Calendar / Drive / Notes for new action items; triage stale tasks; fill memory gaps; flag any hard-rule violations declared in parent CLAUDE.md. |
 | `/simon-productivity:update --comprehensive` | Same plus a deep multi-source scan and new-entity suggestions. |
 | `/simon-productivity:update-review` | **WIP.** Same scan as `update --comprehensive` plus a final HTML review dashboard rendered to disk. Parallel A/B test — not promoted yet. |
 | `/simon-productivity:bump-version <major\|minor\|patch>` | Atomically bump the plugin version across `plugin.json` + both fields in `marketplace.json`. Refuses to run on a dirty tree. User-only. |
@@ -33,8 +33,8 @@ Once the repo is flipped to public:
 
 | Skill | Role | Invocation |
 |-------|------|------------|
-| `start` | Initialize the system. Track-aware. Bootstraps from existing CLAUDE.md/memory if present. | User-invocable |
-| `update` | Keep state current. Track-aware. Vercel + GitHub built in. | User-invocable |
+| `start` | Initialize the system in the current folder. Folder-agnostic. Bootstraps from existing CLAUDE.md/memory and inherits from parent CLAUDE.md if present. | User-invocable |
+| `update` | Keep state current. Folder-agnostic. Vercel + GitHub built in. Respects hard rules + verification policies declared in any parent CLAUDE.md. | User-invocable |
 | `update-review` | **WIP** — `update --comprehensive` plus an HTML review render. Kept parallel to `update` until comparison testing decides whether to fold in. | User-only (`disable-model-invocation: true`) |
 | `bump-version` | Coordinated SemVer bump across the three manifest fields. Refuses dirty tree, refuses pre-bump drift. | User-only (`disable-model-invocation: true`) |
 | `task-management` | `TASKS.md` format and editing conventions. | Claude-only (`user-invocable: false`) |
