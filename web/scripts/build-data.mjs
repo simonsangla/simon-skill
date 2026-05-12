@@ -163,9 +163,9 @@ function parseMemory(markdown) {
   const tableRe = /\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)+)/g;
   let m;
   while ((m = tableRe.exec(markdown)) !== null) {
-    const headers = m[1].split('|').map(h => h.trim()).filter(Boolean);
+    const headers = m[1].split('|').map(h => h.trim());
     const rows = m[2].trim().split('\n').map(row =>
-      row.split('|').map(c => c.trim()).filter(c => c.length > 0)
+      row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim())
     );
     parsed.tables.push({ headers, rows });
   }
@@ -227,8 +227,7 @@ async function main() {
   if (claudeMd) memory.claudeMd = { content: claudeMd };
 
   const memoryRoot = path.join(REPO_ROOT, 'memory');
-  if (await readIfExists(memoryRoot).catch(() => null) !== null
-      || await fs.stat(memoryRoot).then(() => true).catch(() => false)) {
+  if (await fs.stat(memoryRoot).then(s => s.isDirectory()).catch(() => false)) {
     try {
       const topFiles = await listMd(memoryRoot);
       for (const name of topFiles) {

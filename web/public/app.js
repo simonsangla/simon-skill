@@ -111,11 +111,11 @@ function renderBlocks(md) {
 
     // Table
     if (line.includes('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1])) {
-      const headerCells = line.split('|').map(s => s.trim()).filter(s => s.length);
+      const headerCells = line.trim().replace(/^\||\|$/g, '').split('|').map(s => s.trim());
       i += 2;
       const rows = [];
       while (i < lines.length && lines[i].includes('|') && lines[i].trim()) {
-        rows.push(lines[i].split('|').map(s => s.trim()).filter(s => s.length));
+        rows.push(lines[i].trim().replace(/^\||\|$/g, '').split('|').map(s => s.trim()));
         i++;
       }
       const thead = `<thead><tr>${headerCells.map(c => `<th>${renderInline(c)}</th>`).join('')}</tr></thead>`;
