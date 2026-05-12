@@ -10,6 +10,9 @@ Thumbs.db
 
 # Local Claude config that should never be committed
 .claude/settings.local.json
+# Active hook registration — gitignored so cloning the repo does not silently
+# enable hooks before review. The committed template is .claude/settings.json.example.
+.claude/settings.json
 
 # Secrets (defense in depth — should never exist here, but blocking just in case)
 .env
