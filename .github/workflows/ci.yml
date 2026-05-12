@@ -1,0 +1,64 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate plugin manifests + skills
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Validate JSON manifests
+        run: |
+          set -euo pipefail
+          fail=0
+          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json; do
+            if [ -f "$f" ]; then
+              echo "Validating $f"
+              jq empty "$f" || { echo "::error file=$f::Invalid JSON"; fail=1; }
+            else
+              echo "::warning::$f missing"
+            fi
+          done
+          exit $fail
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, sys, re
+          import pathlib
+
+          REQUIRED = ("name", "description")
+          fail = []
+          skills_dir = pathlib.Path("skills")
+          if not skills_dir.exists():
+              print("::warning::skills/ directory missing — skipping frontmatter lint")
+              sys.exit(0)
+          skill_files = list(skills_dir.glob("*/SKILL.md"))
+          if not skill_files:
+              print("::warning::no SKILL.md files found under skills/")
+              sys.exit(0)
+          for f in skill_files:
+              text = f.read_text(encoding="utf-8")
+              m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+              if not m:
+                  fail.append(f"{f}: missing YAML frontmatter block")
+                  continue
+              block = m.group(1)
+              for key in REQUIRED:
+                  if not re.search(rf"^{key}\s*:\s*\S", block, re.MULTILINE):
+                      fail.append(f"{f}: missing required key '{key}' in frontmatter")
+          for line in fail:
+              print(f"::error::{line}")
+          sys.exit(1 if fail else 0)
+          PY

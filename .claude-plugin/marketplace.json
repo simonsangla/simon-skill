@@ -1,0 +1,21 @@
+{
+  "name": "simon-productivity",
+  "owner": {
+    "name": "Simon Sangla"
+  },
+  "metadata": {
+    "description": "simon-productivity plugin marketplace",
+    "version": "0.0.1"
+  },
+  "plugins": [
+    {
+      "name": "simon-productivity",
+      "description": "Three-track productivity plugin: task management, two-tier memory, multi-source sync, and a local HTML dashboard.",
+      "version": "0.0.1",
+      "source": "./",
+      "author": {
+        "name": "Simon Sangla"
+      }
+    }
+  ]
+}

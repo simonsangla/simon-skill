@@ -1,0 +1,9 @@
+{
+  "name": "simon-productivity",
+  "description": "Three-track productivity plugin: task management, two-tier memory, multi-source sync, and a local HTML dashboard.",
+  "version": "0.0.1",
+  "author": {
+    "name": "Simon Sangla",
+    "email": "simonsangla@gmail.com"
+  }
+}
