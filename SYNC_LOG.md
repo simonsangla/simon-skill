@@ -2,14 +2,24 @@
 
 Audit trail of `/sync` operations. One entry per session-end sync.
 
-## 2026-05-12 — session 3 progress
+## 2026-05-12 — session 3 close-out
 
 | Branch | PR | CI | Merge | Notes |
 |---|---|---|---|---|
 | `feat/start-update-folder-agnostic` | [#8](https://github.com/simonsangla/simon-productivity/pull/8) | ✅ pass | `1038d3e` (squash) | Dropped hard-coded job/MetricPilot/simon-platform tracks from `start` + `update`; detect via CWD signals instead. Plugin bumped to v0.3.0. |
 | `feat/portuguese-tax-skill` | [#9](https://github.com/simonsangla/simon-productivity/pull/9) | ✅ pass | `49ec5aa` (squash) | New `portuguese-tax-and-benefits` skill (IRS / Anexo L / NHR / IFICI reference). User-invocable. |
+| `chore/session-3-closeout` | [#10](https://github.com/simonsangla/simon-productivity/pull/10) | ✅ pass (5s) | `064928e` (squash) | TASKS triage + memory refresh. Closed "Activate project hooks" Active item; added "Refresh HANDOFF.md" follow-up; refreshed `memory/projects/simon-productivity.md` to v0.3.0 state; added `memory/projects/portuguese-tax-and-benefits.md` with skill validation notes from real session exercise. |
+| `feat/kanban-view` | [#11](https://github.com/simonsangla/simon-productivity/pull/11) | ✅ pass (4s) | `51ab92f` (squash) | Kanban view in `skills/dashboard.html`: rename Board→Kanban toggle, semantic column rails (active=terracotta, blocked=ochre, deferred=warm-neutral, done=sage), soft WIP hints (Active=5, Blocked=7). Additive — no storage / drag-drop / manifest changes. Skill `frontend-design` invoked. |
 
 Local: hooks activated via `.claude/settings.json` (uses `$CLAUDE_PROJECT_DIR` instead of example's hardcoded absolute paths). Closes Active task from session 2.
+
+After session-3 close:
+- Main: `51ab92f` (`origin/main == main`)
+- Open PRs in this repo: none
+- Working tree: clean
+- Plugin version: v0.3.0 (no manifest bump needed for #10 + #11 — memory-tier + visual-asset changes don't touch skills inventory)
+- Active TASKS items: update-review comparison test, update-review promotion decision, HANDOFF.md refresh
+- Stale remote branches (cleanup candidate, separate PR): `chore/integrate-claude-config-sync`
 
 ## 2026-05-12 — session 2 close-out
 
