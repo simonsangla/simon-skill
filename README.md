@@ -25,6 +25,7 @@ Once the repo is flipped to public:
 | `/simon-productivity:start` | Detect which track you're in, initialize tasks + memory if missing, open the dashboard, do an optional bootstrap scan across Gmail / Calendar / Drive / Apple Notes / Vercel / GitHub. |
 | `/simon-productivity:update` | Sync tasks from GitHub (`gh issue list --assignee=@me`), Vercel build status, optionally Linear; scan Gmail / Calendar / Drive / Notes for new action items; triage stale tasks; fill memory gaps; flag any compliance-gate violations. |
 | `/simon-productivity:update --comprehensive` | Same plus a deep multi-source scan and new-entity suggestions. |
+| `/simon-productivity:update-review` | **WIP.** Same scan as `update --comprehensive` plus a final HTML review dashboard rendered to disk. Parallel A/B test — not promoted yet. |
 | `/simon-productivity:bump-version <major\|minor\|patch>` | Atomically bump the plugin version across `plugin.json` + both fields in `marketplace.json`. Refuses to run on a dirty tree. User-only. |
 | `/validate` | Run the CI checks locally (`jq empty` on JSON manifests + SKILL.md frontmatter lint). |
 
@@ -34,6 +35,7 @@ Once the repo is flipped to public:
 |-------|------|------------|
 | `start` | Initialize the system. Track-aware. Bootstraps from existing CLAUDE.md/memory if present. | User-invocable |
 | `update` | Keep state current. Track-aware. Vercel + GitHub built in. | User-invocable |
+| `update-review` | **WIP** — `update --comprehensive` plus an HTML review render. Kept parallel to `update` until comparison testing decides whether to fold in. | User-only (`disable-model-invocation: true`) |
 | `bump-version` | Coordinated SemVer bump across the three manifest fields. Refuses dirty tree, refuses pre-bump drift. | User-only (`disable-model-invocation: true`) |
 | `task-management` | `TASKS.md` format and editing conventions. | Claude-only (`user-invocable: false`) |
 | `memory-management` | Two-tier memory architecture (`CLAUDE.md` hot cache + `memory/` directory). | Claude-only (`user-invocable: false`) |

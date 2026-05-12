@@ -3,6 +3,8 @@
 ## Active
 
 - [ ] **Activate project hooks** — `cp .claude/settings.json.example .claude/settings.json` to enable the template-sync warning + `git add -A` blocker. Activation gated behind manual step because registering project hooks is a self-modification of agent config (requires user approval). After activation: verify both hooks fire in a new session.
+- [ ] **Compare `/update --comprehensive` vs `/update-review` text reports** — confirm section-for-section identity on the same input before any promotion decision. Track-by-track: at minimum workspace-root + plugin-source. Test recipe in `skills/update-review/SKILL.md` "Comparison-test protocol".
+- [ ] **Decide promotion path for `update-review`** — after comparison passes: (a) fold step 10 into `update --comprehensive` and delete `update-review`, (b) keep both as variants, or (c) add `--render` flag to `update` instead. Document the decision in HANDOFF.md.
 
 ## Waiting On
 
