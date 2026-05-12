@@ -21,7 +21,7 @@ jobs:
         run: |
           set -euo pipefail
           fail=0
-          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json; do
+          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json .mcp.json; do
             if [ -f "$f" ]; then
               echo "Validating $f"
               jq empty "$f" || { echo "::error file=$f::Invalid JSON"; fail=1; }
