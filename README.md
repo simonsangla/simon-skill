@@ -39,6 +39,7 @@ Once the repo is flipped to public:
 | `bump-version` | Coordinated SemVer bump across the three manifest fields. Refuses dirty tree, refuses pre-bump drift. | User-only (`disable-model-invocation: true`) |
 | `task-management` | `TASKS.md` format and editing conventions. | Claude-only (`user-invocable: false`) |
 | `memory-management` | Two-tier memory architecture (`CLAUDE.md` hot cache + `memory/` directory). | Claude-only (`user-invocable: false`) |
+| `portuguese-tax-and-benefits` | Operating manual for PT personal tax (IRS, modelo 3, NHR/IFICI, IRS Jovem), property tax (IMI/AIMI/IMT/IS), and IEFP / Seg Social benefits. Source-first, never-invent discipline with structured 6-section answer template. | Claude-only (triggered by PT tax / benefits context) |
 
 ## Project automation (this repo only)
 
