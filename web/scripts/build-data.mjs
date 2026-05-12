@@ -22,7 +22,7 @@ const OUT_DIR = path.join(WEB_ROOT, 'public', 'data');
 
 const SECRET_PATTERNS = [
   { re: /sk-ant-[A-Za-z0-9_-]{20,}/g, label: 'claude-key' },
-  { re: /sk-[A-Za-z0-9]{20,}/g, label: 'api-key' },
+  { re: /sk-[A-Za-z0-9_-]{20,}/g, label: 'api-key' },
   { re: /ghp_[A-Za-z0-9]{30,}/g, label: 'github-token' },
   { re: /gho_[A-Za-z0-9]{30,}/g, label: 'github-token' },
   { re: /ghu_[A-Za-z0-9]{30,}/g, label: 'github-token' },
@@ -291,23 +291,27 @@ async function main() {
   console.log(`[build-data] memory files: ${meta.memoryFileCount}`);
   console.log(`[build-data] commit: ${meta.commitShort}`);
 
-  // Audit: scan output for anything still resembling a secret pattern.
+  // Audit: scan output for anything still resembling a redaction class.
+  // Cover every regex the sanitizer claims to redact — emails, phones,
+  // home-directory paths, and all secret patterns — so a missed pass on any
+  // class trips the build instead of shipping PII silently.
+  const auditClasses = [
+    ...SECRET_PATTERNS,
+    { re: EMAIL_RE, label: 'email' },
+    { re: PHONE_RE, label: 'phone' },
+    { re: HOME_PATH_RE, label: 'home-path' },
+  ];
   const auditPaths = ['tasks.json', 'memory.json'].map(f => path.join(OUT_DIR, f));
   let leaked = 0;
   for (const p of auditPaths) {
     const text = await fs.readFile(p, 'utf8');
-    for (const { re, label } of SECRET_PATTERNS) {
+    for (const { re, label } of auditClasses) {
       const hits = text.match(new RegExp(re.source, re.flags));
       if (hits) {
         console.error(`[build-data] LEAK in ${path.basename(p)}: ${label} (${hits.length})`);
         leaked += hits.length;
       }
     }
-    if (EMAIL_RE.test(text)) {
-      console.error(`[build-data] LEAK in ${path.basename(p)}: email address`);
-      leaked++;
-    }
-    EMAIL_RE.lastIndex = 0;
   }
   if (leaked > 0) {
     console.error(`[build-data] aborting: ${leaked} potential leaks in output`);

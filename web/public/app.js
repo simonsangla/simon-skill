@@ -50,12 +50,17 @@ function renderInline(s) {
     if (!/^https?:\/\//.test(url)) return `${text}`;
     return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
   });
-  // Bare URLs (only those not already in a link)
-  out = out.replace(/(?<!["'>])(https?:\/\/[^\s<>")]+)/g, url =>
-    `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+  // Bare URLs (only those not already inside an <a href="…"> emitted above).
+  // Match an optional preceding non-quote/angle-bracket char (or start of
+  // string) instead of using a lookbehind, since Safari <16.4 SyntaxErrors
+  // on lookbehind assertions at script-parse time.
+  out = out.replace(/(^|[^"'>])(https?:\/\/[^\s<>")]+)/g, (_, prefix, url) =>
+    `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  // Italic — single * not adjacent to space
-  out = out.replace(/(?<![*\w])\*([^*\n]+)\*(?!\w)/g, '<em>$1</em>');
+  // Italic — single * not adjacent to a word char or another *. Capture the
+  // preceding context (or start-of-string) instead of a lookbehind for the
+  // same Safari <16.4 reason.
+  out = out.replace(/(^|[^*\w])\*([^*\n]+)\*(?!\w)/g, '$1<em>$2</em>');
   return out;
 }
 
