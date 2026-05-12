@@ -2,9 +2,9 @@
 
 ## Active
 
-- [ ] **Activate project hooks** — `cp .claude/settings.json.example .claude/settings.json` to enable the template-sync warning + `git add -A` blocker. Activation gated behind manual step because registering project hooks is a self-modification of agent config (requires user approval). After activation: verify both hooks fire in a new session.
 - [ ] **Compare `/update --comprehensive` vs `/update-review` text reports** — confirm section-for-section identity on the same input before any promotion decision. Track-by-track: at minimum workspace-root + plugin-source. Test recipe in `skills/update-review/SKILL.md` "Comparison-test protocol".
 - [ ] **Decide promotion path for `update-review`** — after comparison passes: (a) fold step 10 into `update --comprehensive` and delete `update-review`, (b) keep both as variants, or (c) add `--render` flag to `update` instead. Document the decision in HANDOFF.md.
+- [ ] **Refresh HANDOFF.md** — currently snapshots session 2 close-out (v0.2.1, 3 open PRs). Out of date: PRs #6/#7 merged, then #8 (folder-agnostic) + #9 (portuguese-tax) shipped to v0.3.0. Hooks activated. Smoke-retest recipe still references v0.2.1.
 
 ## Waiting On
 
@@ -17,6 +17,9 @@
 
 ## Done
 
+- [x] ~~**Activate project hooks**~~ - `.claude/settings.json` written with `$CLAUDE_PROJECT_DIR` paths (cleaner than the absolute-path example); template-sync + `git add -A` blocker live in this repo (2026-05-12)
+- [x] ~~**Add `portuguese-tax-and-benefits` skill**~~ - IRS / Anexo L / NHR / IFICI reference skill, user-invocable (2026-05-12, PR #9, commit `49ec5aa`)
+- [x] ~~**Make `start` + `update` folder-agnostic**~~ - dropped hard-coded job/MetricPilot/simon-platform tracks; detect via CWD signals instead (2026-05-12, PR #8, commit `1038d3e`)
 - [x] ~~**Bootstrap repo structure**~~ - scaffold Claude Code plugin layout (plugin manifest, skills/, marketplace.json) using `repo-bootstrap` skill (2026-05-12, root commit `493a21d`)
 - [x] ~~**Publish plugin marketplace**~~ - `.claude-plugin/marketplace.json` shipped in root commit (2026-05-12)
 - [x] ~~**Wire CI**~~ - `.github/workflows/ci.yml` validates JSON manifests + SKILL.md frontmatter; green on first run (2026-05-12)

@@ -2,6 +2,15 @@
 
 Audit trail of `/sync` operations. One entry per session-end sync.
 
+## 2026-05-12 — session 3 progress
+
+| Branch | PR | CI | Merge | Notes |
+|---|---|---|---|---|
+| `feat/start-update-folder-agnostic` | [#8](https://github.com/simonsangla/simon-productivity/pull/8) | ✅ pass | `1038d3e` (squash) | Dropped hard-coded job/MetricPilot/simon-platform tracks from `start` + `update`; detect via CWD signals instead. Plugin bumped to v0.3.0. |
+| `feat/portuguese-tax-skill` | [#9](https://github.com/simonsangla/simon-productivity/pull/9) | ✅ pass | `49ec5aa` (squash) | New `portuguese-tax-and-benefits` skill (IRS / Anexo L / NHR / IFICI reference). User-invocable. |
+
+Local: hooks activated via `.claude/settings.json` (uses `$CLAUDE_PROJECT_DIR` instead of example's hardcoded absolute paths). Closes Active task from session 2.
+
 ## 2026-05-12 — session 2 close-out
 
 | Branch | PR | CI | Merge | Notes |
