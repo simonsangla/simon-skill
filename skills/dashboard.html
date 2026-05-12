@@ -186,6 +186,87 @@
       font-size: 12px;
       font-weight: 500;
       color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ===== KANBAN: semantic column theming =====
+       Status is derived in JS from section name (case-insensitive):
+         active    → primary (terracotta rail)
+         blocked   → amber rail (Waiting On / Blocked)
+         deferred  → neutral grey rail (Someday / Backlog)
+         done      → muted green rail (Done / Archive / Completed)
+       Custom sections get no theming — default look applies. */
+
+    :root {
+      --rail-active:   var(--accent);
+      --rail-blocked:  #C28A3A;   /* warm ochre, picks up the cream backdrop */
+      --rail-deferred: #B7B5AE;   /* warmer grey than --text-muted, less ghostly */
+      --rail-done:     #6F8B6E;   /* sage, NOT bright spring green — keeps editorial tone */
+      --tint-active:   rgba(217, 119, 87, 0.06);
+      --tint-blocked:  rgba(194, 138, 58, 0.06);
+      --tint-deferred: rgba(183, 181, 174, 0.08);
+      --tint-done:     rgba(111, 139, 110, 0.06);
+    }
+
+    .column {
+      position: relative;
+      overflow: hidden;  /* so the rail respects the border-radius */
+    }
+
+    .column[data-status]::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--rail-active);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .column[data-status="active"]::before   { background: var(--rail-active); }
+    .column[data-status="blocked"]::before  { background: var(--rail-blocked); }
+    .column[data-status="deferred"]::before { background: var(--rail-deferred); }
+    .column[data-status="done"]::before     { background: var(--rail-done); }
+
+    .column[data-status="active"]   .column-header { background: var(--tint-active); }
+    .column[data-status="blocked"]  .column-header { background: var(--tint-blocked); }
+    .column[data-status="deferred"] .column-header { background: var(--tint-deferred); }
+    .column[data-status="done"]     .column-header { background: var(--tint-done); }
+
+    /* Done column: gently mute card emphasis — completed work shouldn't shout */
+    .column[data-status="done"] .task-card {
+      opacity: 0.78;
+    }
+    .column[data-status="done"] .task-card:hover {
+      opacity: 1;
+    }
+    .column[data-status="done"] .card-title {
+      color: var(--text-secondary);
+    }
+
+    /* Deferred column: subtle de-emphasis without burying the content */
+    .column[data-status="deferred"] .card-title {
+      color: var(--text-secondary);
+    }
+
+    /* WIP soft-limit hint — kanban culture, hint not block */
+    .column.over-wip .column-header {
+      box-shadow: inset 0 -1px 0 var(--rail-blocked);
+    }
+    .column.over-wip .count {
+      color: var(--rail-blocked);
+    }
+    .column.over-wip .count::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--rail-blocked);
+      display: inline-block;
     }
 
     .cards {
@@ -1209,7 +1290,7 @@
         <button id="memoryTabBtn">Memory</button>
       </div>
       <div class="view-toggle" id="taskViewToggle">
-        <button id="boardViewBtn" class="active">Board</button>
+        <button id="boardViewBtn" class="active">Kanban</button>
         <button id="listViewBtn">List</button>
       </div>
     </div>
@@ -1639,13 +1720,47 @@
       input.addEventListener('blur', saveEdit);
     }
 
+    // Kanban: map a section title to a semantic status.
+    // Case/whitespace-insensitive substring match on EN keywords.
+    // Returns null when the section doesn't fit a known bucket — no theming applied.
+    function kanbanStatus(name) {
+      const n = (name || '').toLowerCase();
+      if (/\bactive\b|\bnow\b|\bin\s*progress\b|\bdoing\b/.test(n)) return 'active';
+      if (/\bwait(ing)?\b|\bblocked?\b|\bon\s*hold\b/.test(n)) return 'blocked';
+      if (/\bsomeday\b|\bbacklog\b|\blater\b|\bidea/.test(n)) return 'deferred';
+      if (/\bdone\b|\barchive\b|\bcomplete/.test(n)) return 'done';
+      return null;
+    }
+
+    // Soft WIP limits — hint not block. Active is tighter (focus discipline).
+    function kanbanWipLimit(status) {
+      if (status === 'active') return 5;
+      if (status === 'blocked') return 7;
+      return null;  // no limit applied for deferred/done/custom
+    }
+
     function createColumn(id, title, items) {
       const col = document.createElement('div');
       col.className = 'column';
+
+      const status = kanbanStatus(title);
+      if (status) col.dataset.status = status;
+
+      const wipLimit = kanbanWipLimit(status);
+      const overWip = wipLimit !== null && items.length > wipLimit;
+      if (overWip) col.classList.add('over-wip');
+
+      const countLabel = overWip
+        ? `${items.length} / ${wipLimit}`
+        : `${items.length}`;
+      const countTitle = overWip
+        ? `WIP soft limit: ${wipLimit}. Kanban hint — consider what to finish before adding more.`
+        : '';
+
       col.innerHTML = `
         <div class="column-header">
           <span class="column-title" data-section-id="${id}" style="cursor: pointer;">${title}</span>
-          <span class="count">${items.length}</span>
+          <span class="count"${countTitle ? ` title="${countTitle}"` : ''}>${countLabel}</span>
         </div>
         <div class="cards" data-column="${id}"></div>
         <div class="add-card">
