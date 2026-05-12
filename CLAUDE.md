@@ -27,6 +27,27 @@ If a different purpose is requested, replace this section rather than layering o
 
 The compliance gate (no paid AI eval work until Scenario A confirmed) and simon-platform's §1–§7 quality bar apply across all tracks — push back if a request violates either.
 
+## Centralized config sibling (`~/projects/claude-config/`)
+
+This plugin is the **template + code**. Simon's **runtime instance** of its output lives elsewhere — keep them in sync mentally, never edit one expecting the other to follow.
+
+| Surface | Path | Role |
+|---------|------|------|
+| Plugin source | `~/projects/simon-productivity/` (this repo) | The four skills + `dashboard.html` + manifests. Distributed via `/plugin install`. |
+| Global Claude config | `~/projects/claude-config/` | Symlinked into `~/.claude/` by its `setup.sh`. Holds `CLAUDE.md`, hooks, generic skills (not plugin-namespaced), settings. |
+| Runtime productivity data | `~/projects/claude-config/cowork/` | Simon's actual `TASKS.md` + `memory/` + `dashboard.html` for cross-track use. Maintained by `/simon-productivity:start` and `/simon-productivity:update`. |
+
+**Conventions inherited from claude-config (apply here too):**
+- Conventional commits with scoped types: `feat(skill): …`, `feat(memory): …`, `chore(config): …`, `docs: …`.
+- Skills with side effects use `disable-model-invocation: true` (user-only).
+- Background-knowledge skills use `user-invocable: false` (Claude-only).
+- CI = JSON + YAML manifest validity + SKILL.md frontmatter lint. No JS/TS build gates (no JS/TS code).
+- Pin GitHub Actions to full commit SHA; Dependabot updates them weekly.
+- No `git add -A` / `git add .` — stage files by name to avoid leaking secrets or stray artifacts.
+
+**What this plugin does NOT use from claude-config:**
+- `setup.sh` symlink-into-`~/.claude/` pattern. Plugin distribution goes through Claude Code's `/plugin marketplace add` + `/plugin install` instead. Editing the SKILL.md files here does **not** automatically update the installed plugin — bump the version and reinstall, or work directly inside the installed plugin's cache during iteration.
+
 ## When real code lands, this file should grow these sections
 
 - **Commands** — build / lint / typecheck / test (incl. single-test invocation), dev server, deploy.
