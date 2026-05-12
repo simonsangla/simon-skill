@@ -48,6 +48,12 @@ This plugin is the **template + code**. Simon's **runtime instance** of its outp
 **What this plugin does NOT use from claude-config:**
 - `setup.sh` symlink-into-`~/.claude/` pattern. Plugin distribution goes through Claude Code's `/plugin marketplace add` + `/plugin install` instead. Editing the SKILL.md files here does **not** automatically update the installed plugin — bump the version and reinstall, or work directly inside the installed plugin's cache during iteration.
 
+## Templates ↔ canonical files
+
+`skills/start/templates/` mirrors this repo's bootstrap state with `{{PLACEHOLDER}}` substitution. When the `start` skill is invoked with `plugin` in an empty git repo, it stamps these templates out to scaffold a fresh plugin repo (LICENSE, .gitignore, README, .github/{dependabot.yml,workflows/ci.yml}, .claude-plugin/{plugin.json,marketplace.json}).
+
+**Sync rule:** when changing any of this repo's hygiene files (`LICENSE`, `.gitignore`, `.github/dependabot.yml`, `.github/workflows/ci.yml`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `README.md`), update the matching template under `skills/start/templates/` in the same commit. CI does not enforce this — it's a convention. Drift means new plugins scaffolded with `/simon-productivity:start plugin` get an older hygiene baseline than this repo.
+
 ## When real code lands, this file should grow these sections
 
 - **Commands** — build / lint / typecheck / test (incl. single-test invocation), dev server, deploy.

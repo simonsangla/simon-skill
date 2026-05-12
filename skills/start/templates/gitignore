@@ -1,0 +1,26 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Local Claude config that should never be committed
+.claude/settings.local.json
+
+# Secrets (defense in depth — should never exist here, but blocking just in case)
+.env
+.env.*
+!.env.example
+
+# Node (in case anyone adds JS tooling later)
+node_modules/
+npm-debug.log*
+
+# Python (in case scripts use uv/venv)
+.venv/
+__pycache__/
+*.pyc
