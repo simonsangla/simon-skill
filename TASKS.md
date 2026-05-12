@@ -20,3 +20,4 @@
 - [x] ~~**Publish plugin marketplace**~~ - `.claude-plugin/marketplace.json` shipped in root commit (2026-05-12)
 - [x] ~~**Wire CI**~~ - `.github/workflows/ci.yml` validates JSON manifests + SKILL.md frontmatter; green on first run (2026-05-12)
 - [x] ~~**Migrate plugin source into this repo**~~ - ported `start`, `update`, `task-management`, `memory-management` SKILL.md files + `dashboard.html` + `CONNECTORS.md` + `.mcp.json` from local plugin cache; bumped manifest to v0.1.0 (2026-05-12, PR #2)
+- [x] ~~**Teach `start` to scaffold new plugin repos**~~ - added "Plugin source" track with `plugin` arg trigger; templates at `skills/start/templates/` mirror this repo's bootstrap state with `{{PLACEHOLDER}}` substitution. Bumped manifest to v0.2.0 (2026-05-12, PR #3)

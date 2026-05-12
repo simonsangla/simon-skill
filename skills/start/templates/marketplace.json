@@ -1,0 +1,21 @@
+{
+  "name": "{{PLUGIN_NAME}}",
+  "owner": {
+    "name": "{{AUTHOR_NAME}}"
+  },
+  "metadata": {
+    "description": "{{PLUGIN_NAME}} plugin marketplace",
+    "version": "0.0.1"
+  },
+  "plugins": [
+    {
+      "name": "{{PLUGIN_NAME}}",
+      "description": "{{PLUGIN_DESCRIPTION}}",
+      "version": "0.0.1",
+      "source": "./",
+      "author": {
+        "name": "{{AUTHOR_NAME}}"
+      }
+    }
+  ]
+}
