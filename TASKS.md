@@ -2,7 +2,7 @@
 
 ## Active
 
-_(none — see Someday for backlog)_
+- [ ] **Activate project hooks** — `cp .claude/settings.json.example .claude/settings.json` to enable the template-sync warning + `git add -A` blocker. Activation gated behind manual step because registering project hooks is a self-modification of agent config (requires user approval). After activation: verify both hooks fire in a new session.
 
 ## Waiting On
 

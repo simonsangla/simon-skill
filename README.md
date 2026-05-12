@@ -25,6 +25,8 @@ Once the repo is flipped to public:
 | `/simon-productivity:start` | Detect which track you're in, initialize tasks + memory if missing, open the dashboard, do an optional bootstrap scan across Gmail / Calendar / Drive / Apple Notes / Vercel / GitHub. |
 | `/simon-productivity:update` | Sync tasks from GitHub (`gh issue list --assignee=@me`), Vercel build status, optionally Linear; scan Gmail / Calendar / Drive / Notes for new action items; triage stale tasks; fill memory gaps; flag any compliance-gate violations. |
 | `/simon-productivity:update --comprehensive` | Same plus a deep multi-source scan and new-entity suggestions. |
+| `/simon-productivity:bump-version <major\|minor\|patch>` | Atomically bump the plugin version across `plugin.json` + both fields in `marketplace.json`. Refuses to run on a dirty tree. User-only. |
+| `/validate` | Run the CI checks locally (`jq empty` on JSON manifests + SKILL.md frontmatter lint). |
 
 ## Skills
 
@@ -32,8 +34,21 @@ Once the repo is flipped to public:
 |-------|------|------------|
 | `start` | Initialize the system. Track-aware. Bootstraps from existing CLAUDE.md/memory if present. | User-invocable |
 | `update` | Keep state current. Track-aware. Vercel + GitHub built in. | User-invocable |
+| `bump-version` | Coordinated SemVer bump across the three manifest fields. Refuses dirty tree, refuses pre-bump drift. | User-only (`disable-model-invocation: true`) |
 | `task-management` | `TASKS.md` format and editing conventions. | Claude-only (`user-invocable: false`) |
 | `memory-management` | Two-tier memory architecture (`CLAUDE.md` hot cache + `memory/` directory). | Claude-only (`user-invocable: false`) |
+
+## Project automation (this repo only)
+
+Project-level hooks + a release-readiness subagent for plugin-dev work. None of these ship with the installed plugin — they live in `.claude/` and only fire when Claude operates inside this repo.
+
+| Surface | What it does | How to enable |
+|---|---|---|
+| `.claude/hooks/check-template-sync.sh` | PostToolUse warning when a hygiene file (`LICENSE`, `README.md`, `.gitignore`, CI workflow, plugin/marketplace manifest) is edited without the matching template under `skills/start/templates/`. Non-blocking. | Activate via the settings file below. |
+| `.claude/hooks/block-git-add-all.sh` | PreToolUse(Bash) block on `git add -A`, `git add .`, `git add --all`. Exit 2 with stderr explanation. | Activate via the settings file below. |
+| `.claude/agents/plugin-release-reviewer.md` | Read-only subagent. Run before `git tag vX.Y.Z`: checks version sync, HANDOFF changelog, template validity after placeholder substitution, privacy gate (no review HTML / personal data staged), CI status. | Available automatically — invoke by name. |
+
+**Hook activation** (one-time, user-approved): `cp .claude/settings.json.example .claude/settings.json`. The `.example` file ships in this repo; the live `.claude/settings.json` is gitignored to avoid auto-applying hooks for anyone who clones the repo before reviewing them.
 
 ## Connectors
 
