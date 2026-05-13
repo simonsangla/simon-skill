@@ -1,0 +1,14 @@
+{
+  "name": "simon-productivity-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Read-only mobile PWA dashboard for the simon-productivity plugin. Static JSON is built from TASKS.md and memory/ at deploy time.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-data.mjs",
+    "dev": "node scripts/build-data.mjs && npx --yes serve@14 public -l 5173"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
