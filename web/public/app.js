@@ -1,6 +1,10 @@
 // Read-only PWA dashboard. No source files are loaded directly at runtime;
 // no edits are persisted anywhere.
 
+// Initialize Vercel Analytics
+import { inject } from './analytics.js';
+inject();
+
 const STATUS_EL = document.getElementById('status');
 const META_EL = document.getElementById('metaLine');
 const TASKS_EL = document.getElementById('tasksContent');

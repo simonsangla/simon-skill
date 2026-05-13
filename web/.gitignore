@@ -1,6 +1,9 @@
 # Generated at build time from TASKS.md + memory/ — never commit
 public/data/
 
+# Generated at build time from node_modules/@vercel/analytics — never commit
+public/analytics.js
+
 # Node
 node_modules/
 package-lock.json
