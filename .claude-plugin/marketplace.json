@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "simon-productivity plugin marketplace",
-    "version": "0.3.0"
+    "version": "0.4.0"
   },
   "plugins": [
     {
       "name": "simon-productivity",
       "description": "Three-track productivity plugin (job search + MetricPilot + simon-platform). Forked from Anthropic's productivity plugin, rewired around Simon's actual connectors (Google trio, Apple Notes, Vercel, GitHub via gh, Figma, Linear, Context7) and aware of Scenario A compliance plus simon-platform's §1–§7 execution rules.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "source": "./",
       "author": {
         "name": "Simon Sangla"

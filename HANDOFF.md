@@ -1,6 +1,6 @@
 # Handoff — simon-productivity
 
-> Last updated: 2026-05-12 (session 2). Read this first; check `TASKS.md` for current backlog state, `git log --oneline -10` for what's landed since, `gh pr list --state=open` for in-flight branches.
+> Last updated: 2026-05-13 (session 4). Read this first; check `TASKS.md` for current backlog state, `git log --oneline -10` for what's landed since, `gh pr list --state=open` for in-flight branches.
 
 ## Goal
 
@@ -18,6 +18,12 @@ The plugin is the **template + code**. Simon's runtime instance of the same file
 | `dc43534` (#3) | New "Plugin source" track in `start` skill — `/simon-productivity:start plugin` scaffolds a fresh plugin repo from templates at `skills/start/templates/`. Bumped to v0.2.0. |
 | `0ee9e39` (#4) | Fixed smoke-test findings: dropped root `dashboard.html` from Plugin source init flow, decoupled scaffold from auto-init so scaffold commit ends with clean working tree. Bumped to v0.2.1. |
 | `29fbdaa` (#5) | TASKS.md cleanup: smoke-test cycle closed, claude-config cross-link logged. Active section now empty. |
+| `1038d3e` (#8) | `start` / `update` skills made folder-agnostic; hard-coded tracks removed. |
+| `49ec5aa` (#9) | New `portuguese-tax-and-benefits` skill: SKILL.md + 5 references (`iefp-seg-social`, `irs`, `property-tax`, `clarifying-questions`, `cross-border`, `sources`). 2025 IAS/figures. |
+| `064928e` (#10) | Session 3 close-out — TASKS triage + memory refresh. |
+| `51ab92f` (#11) | Dashboard kanban view — semantic column rails + soft WIP hints. |
+| `030eb81` | Session 3 sync log — PRs #10 + #11 merged. |
+| _pending_ (`feat/portuguese-tax-2026-refresh`) | **2026 refresh of portuguese-tax-and-benefits**: SKILL.md + 4 existing references replaced from Desktop master (IAS €537,13 / SMN €920 / IMT Jovem €330 539/€660 982 / IRS Jovem 55×IAS = €29 542,15 / AIMI 2026 deductions €600k/€1,2M / IFICI implementing chain Portaria 352/2024 + 52-A/2025 / Subsídio Parcial Guia 6002 v4.41 with worked examples / IRS escalões 2026 +3,51% + −0,3pp on 2–5). **New file `references/self-employed-seg-social.md`** — entire trabalhador-independente regime (CRCSPSS Art. 132–168, taxa 21,4%, declaração trimestral, isenção 12m, pluriactividade dispensa 4×IAS, MOE, economic dependence >50%). Bumped to v0.4.0. |
 
 **Sibling work** in `~/projects/claude-config` ([PR #19](https://github.com/simonsangla/claude-config/pull/19), commit `129b13d`): added `memory/simon-productivity-plugin.md` (reference type, user scope) indexed under "Claude Code harness" in `MEMORY.md`. Cross-linking complete.
 
