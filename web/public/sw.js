@@ -1,7 +1,3 @@
-// Service worker — cache-first for the app shell, network-first for data so
-// new builds win as soon as the device is online but the dashboard still
-// loads offline from the last successful sync.
-
 const VERSION = 'sp-dash-v1';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
@@ -17,7 +13,10 @@ const SHELL_URLS = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(SHELL_CACHE).then(c => c.addAll(SHELL_URLS)).then(() => self.skipWaiting()),
+    caches.open(SHELL_CACHE)
+      // cache: 'reload' so a stale HTTP cache can't poison the precache.
+      .then(c => c.addAll(SHELL_URLS.map(u => new Request(u, { cache: 'reload' }))))
+      .then(() => self.skipWaiting()),
   );
 });
 

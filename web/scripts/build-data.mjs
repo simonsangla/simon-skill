@@ -209,57 +209,37 @@ async function listSubDirs(dir) {
 async function main() {
   await fs.mkdir(OUT_DIR, { recursive: true });
 
-  // --- TASKS ---
   const tasksMd = await readIfExists(path.join(REPO_ROOT, 'TASKS.md'));
   const tasksData = tasksMd
     ? sanitizeDeep(parseTasks(tasksMd))
     : { sections: [], tasks: {} };
+  const tasksJson = JSON.stringify(tasksData, null, 2);
 
-  await fs.writeFile(
-    path.join(OUT_DIR, 'tasks.json'),
-    JSON.stringify(tasksData, null, 2),
-  );
-
-  // --- MEMORY ---
   const memory = { claudeMd: null, files: [], dirs: {} };
-
   const claudeMd = await readIfExists(path.join(REPO_ROOT, 'CLAUDE.md'));
   if (claudeMd) memory.claudeMd = { content: claudeMd };
 
   const memoryRoot = path.join(REPO_ROOT, 'memory');
-  if (await fs.stat(memoryRoot).then(s => s.isDirectory()).catch(() => false)) {
-    try {
-      const topFiles = await listMd(memoryRoot);
-      for (const name of topFiles) {
-        const content = await fs.readFile(path.join(memoryRoot, name), 'utf8');
-        memory.files.push({ name, content, parsed: parseMemory(content) });
-      }
-      const subDirs = await listSubDirs(memoryRoot);
-      for (const dirName of subDirs) {
-        const dirPath = path.join(memoryRoot, dirName);
-        const subFiles = await listMd(dirPath);
-        memory.dirs[dirName] = [];
-        for (const name of subFiles) {
-          const content = await fs.readFile(path.join(dirPath, name), 'utf8');
-          memory.dirs[dirName].push({
-            name,
-            content,
-            parsed: parseMemory(content),
-          });
-        }
-      }
-    } catch (e) {
-      if (e.code !== 'ENOENT') throw e;
-    }
+  try {
+    const [topFiles, subDirs] = await Promise.all([listMd(memoryRoot), listSubDirs(memoryRoot)]);
+    memory.files = await Promise.all(topFiles.map(async name => {
+      const content = await fs.readFile(path.join(memoryRoot, name), 'utf8');
+      return { name, parsed: parseMemory(content) };
+    }));
+    await Promise.all(subDirs.map(async dirName => {
+      const dirPath = path.join(memoryRoot, dirName);
+      const subFiles = await listMd(dirPath);
+      memory.dirs[dirName] = await Promise.all(subFiles.map(async name => {
+        const content = await fs.readFile(path.join(dirPath, name), 'utf8');
+        return { name, parsed: parseMemory(content) };
+      }));
+    }));
+  } catch (e) {
+    if (e.code !== 'ENOENT' && e.code !== 'ENOTDIR') throw e;
   }
 
-  const memorySanitized = sanitizeDeep(memory);
-  await fs.writeFile(
-    path.join(OUT_DIR, 'memory.json'),
-    JSON.stringify(memorySanitized, null, 2),
-  );
+  const memoryJson = JSON.stringify(sanitizeDeep(memory), null, 2);
 
-  // --- META ---
   let commit = 'unknown';
   let commitShort = 'unknown';
   try {
@@ -267,7 +247,6 @@ async function main() {
     commitShort = commit.slice(0, 7);
   } catch {}
 
-  // Vercel exposes VERCEL_GIT_COMMIT_SHA in the build env when wired to a repo.
   if (process.env.VERCEL_GIT_COMMIT_SHA) {
     commit = process.env.VERCEL_GIT_COMMIT_SHA;
     commitShort = commit.slice(0, 7);
@@ -284,31 +263,22 @@ async function main() {
       memory.files.length +
       Object.values(memory.dirs).reduce((n, arr) => n + arr.length, 0),
   };
-  await fs.writeFile(path.join(OUT_DIR, 'meta.json'), JSON.stringify(meta, null, 2));
 
-  console.log(`[build-data] wrote ${OUT_DIR}`);
-  console.log(`[build-data] tasks: ${meta.taskCount} across ${meta.sectionCount} sections`);
-  console.log(`[build-data] memory files: ${meta.memoryFileCount}`);
-  console.log(`[build-data] commit: ${meta.commitShort}`);
-
-  // Audit: scan output for anything still resembling a redaction class.
-  // Cover every regex the sanitizer claims to redact — emails, phones,
-  // home-directory paths, and all secret patterns — so a missed pass on any
-  // class trips the build instead of shipping PII silently.
+  // Audit before writing — scan every redaction class the sanitizer claims
+  // to cover, so a missed pass on any class fails the build instead of
+  // shipping PII silently.
   const auditClasses = [
     ...SECRET_PATTERNS,
     { re: EMAIL_RE, label: 'email' },
     { re: PHONE_RE, label: 'phone' },
     { re: HOME_PATH_RE, label: 'home-path' },
   ];
-  const auditPaths = ['tasks.json', 'memory.json'].map(f => path.join(OUT_DIR, f));
   let leaked = 0;
-  for (const p of auditPaths) {
-    const text = await fs.readFile(p, 'utf8');
+  for (const [name, text] of [['tasks.json', tasksJson], ['memory.json', memoryJson]]) {
     for (const { re, label } of auditClasses) {
       const hits = text.match(new RegExp(re.source, re.flags));
       if (hits) {
-        console.error(`[build-data] LEAK in ${path.basename(p)}: ${label} (${hits.length})`);
+        console.error(`[build-data] LEAK in ${name}: ${label} (${hits.length})`);
         leaked += hits.length;
       }
     }
@@ -317,6 +287,17 @@ async function main() {
     console.error(`[build-data] aborting: ${leaked} potential leaks in output`);
     process.exit(1);
   }
+
+  await Promise.all([
+    fs.writeFile(path.join(OUT_DIR, 'tasks.json'), tasksJson),
+    fs.writeFile(path.join(OUT_DIR, 'memory.json'), memoryJson),
+    fs.writeFile(path.join(OUT_DIR, 'meta.json'), JSON.stringify(meta, null, 2)),
+  ]);
+
+  console.log(`[build-data] wrote ${OUT_DIR}`);
+  console.log(`[build-data] tasks: ${meta.taskCount} across ${meta.sectionCount} sections`);
+  console.log(`[build-data] memory files: ${meta.memoryFileCount}`);
+  console.log(`[build-data] commit: ${meta.commitShort}`);
 }
 
 main().catch(err => {

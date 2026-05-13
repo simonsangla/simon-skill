@@ -1,6 +1,5 @@
-// Read-only PWA dashboard. Fetches sanitized static JSON produced by the
-// build step (web/scripts/build-data.mjs). No source files are loaded directly
-// at runtime; no edits are persisted anywhere.
+// Read-only PWA dashboard. No source files are loaded directly at runtime;
+// no edits are persisted anywhere.
 
 const STATUS_EL = document.getElementById('status');
 const META_EL = document.getElementById('metaLine');
@@ -9,8 +8,6 @@ const MEMORY_TABS_EL = document.getElementById('memoryTabs');
 const MEMORY_CONTENT_EL = document.getElementById('memoryContent');
 
 const COLLAPSED_BY_DEFAULT = new Set(['done']);
-
-// ---------- Helpers ----------
 
 function showStatus(msg) {
   STATUS_EL.textContent = msg;
@@ -38,35 +35,25 @@ function timeAgo(iso) {
   return `${Math.floor(diff / 86_400_000)}d ago`;
 }
 
-// Minimal inline-markdown renderer for task notes and memory content.
-// Keeps things lightweight (no external markdown lib). Handles: **bold**,
-// *italic*, `code`, [text](url), bare URLs.
 function renderInline(s) {
   let out = escapeHtml(s);
-  // Inline code first so it isn't mangled by other rules
   out = out.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
-  // Markdown links
   out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
     if (!/^https?:\/\//.test(url)) return `${text}`;
     return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
   });
-  // Bare URLs (only those not already inside an <a href="…"> emitted above).
-  // Match an optional preceding non-quote/angle-bracket char (or start of
-  // string) instead of using a lookbehind, since Safari <16.4 SyntaxErrors
-  // on lookbehind assertions at script-parse time.
+  // Captured-context groups instead of lookbehinds — Safari <16.4 throws
+  // SyntaxError on lookbehind at script-parse time.
   out = out.replace(/(^|[^"'>])(https?:\/\/[^\s<>")]+)/g, (_, prefix, url) =>
     `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  // Italic — single * not adjacent to a word char or another *. Capture the
-  // preceding context (or start-of-string) instead of a lookbehind for the
-  // same Safari <16.4 reason.
   out = out.replace(/(^|[^*\w])\*([^*\n]+)\*(?!\w)/g, '$1<em>$2</em>');
   return out;
 }
 
-// Block-level markdown renderer for memory sections. Supports headings,
-// paragraphs, lists, fenced + indented code, blockquotes, and the GFM-style
-// pipe tables that show up in memory files.
+const BLOCK_START_RE = /^(#{1,6}\s|```|>|\s*[-*]\s|\s*\d+\.\s)/;
+const isBlockStart = line => BLOCK_START_RE.test(line) || line.includes('|');
+
 function renderBlocks(md) {
   if (!md) return '';
   const lines = md.split('\n');
@@ -156,7 +143,7 @@ function renderBlocks(md) {
     // Paragraph (collect until blank or special line)
     const buf = [line];
     i++;
-    while (i < lines.length && lines[i].trim() && !/^(#{1,6}\s|```|>|\s*[-*]\s|\s*\d+\.\s)/.test(lines[i]) && !lines[i].includes('|')) {
+    while (i < lines.length && lines[i].trim() && !isBlockStart(lines[i])) {
       buf.push(lines[i]);
       i++;
     }
@@ -166,15 +153,11 @@ function renderBlocks(md) {
   return out.join('\n');
 }
 
-// ---------- Data fetching ----------
-
 async function fetchJSON(url) {
   const res = await fetch(url, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`${url}: ${res.status}`);
   return res.json();
 }
-
-// ---------- Tasks rendering ----------
 
 function renderTasks(data) {
   if (!data.sections.length) {
@@ -267,14 +250,13 @@ function buildMemoryTabs(memory) {
   else MEMORY_CONTENT_EL.innerHTML = `<div class="error">No memory content bundled.</div>`;
 }
 
+function memoryCardHtml(title, body) {
+  return `<div class="memory-card"><h2>${escapeHtml(title)}</h2>${body}</div>`;
+}
+
 function renderMemoryContent(memory, tabId) {
   if (tabId === 'overview' && memory.claudeMd) {
-    MEMORY_CONTENT_EL.innerHTML = `
-      <div class="memory-card">
-        <h2>CLAUDE.md</h2>
-        ${renderBlocks(memory.claudeMd.content)}
-      </div>
-    `;
+    MEMORY_CONTENT_EL.innerHTML = memoryCardHtml('CLAUDE.md', renderBlocks(memory.claudeMd.content));
     return;
   }
 
@@ -282,25 +264,16 @@ function renderMemoryContent(memory, tabId) {
     const name = tabId.slice('file-'.length);
     const file = (memory.files || []).find(f => f.name === name);
     if (!file) return;
-    MEMORY_CONTENT_EL.innerHTML = `
-      <div class="memory-card">
-        <h2>${escapeHtml(file.parsed.title || file.name)}</h2>
-        ${renderParsed(file.parsed)}
-      </div>
-    `;
+    MEMORY_CONTENT_EL.innerHTML = memoryCardHtml(file.parsed.title || file.name, renderParsed(file.parsed));
     return;
   }
 
   if (tabId.startsWith('dir-')) {
     const dirName = tabId.slice('dir-'.length);
     const items = (memory.dirs || {})[dirName] || [];
-    MEMORY_CONTENT_EL.innerHTML = items.map(file => `
-      <div class="memory-card">
-        <h2>${escapeHtml(file.parsed.title || file.name)}</h2>
-        ${renderParsed(file.parsed)}
-      </div>
-    `).join('');
-    return;
+    MEMORY_CONTENT_EL.innerHTML = items
+      .map(f => memoryCardHtml(f.parsed.title || f.name, renderParsed(f.parsed)))
+      .join('');
   }
 }
 
@@ -380,8 +353,6 @@ async function boot() {
   }
 }
 
-// ---------- Service worker registration ----------
-
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
@@ -389,7 +360,6 @@ if ('serviceWorker' in navigator) {
       .then(reg => {
         reg.addEventListener('updatefound', () => {
           const sw = reg.installing;
-          if (!sw) return;
           sw.addEventListener('statechange', () => {
             if (sw.state === 'installed' && navigator.serviceWorker.controller) {
               showStatus('Update available — reload to refresh');
