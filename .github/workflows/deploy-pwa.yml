@@ -1,0 +1,104 @@
+name: deploy-pwa
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'vercel.json'
+      - 'TASKS.md'
+      - 'memory/**'
+      - 'CLAUDE.md'
+      - '.github/workflows/deploy-pwa.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'vercel.json'
+      - 'TASKS.md'
+      - 'memory/**'
+      - 'CLAUDE.md'
+      - '.github/workflows/deploy-pwa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: deploy-pwa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy PWA dashboard to Vercel
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@53
+
+      - name: Deploy
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          IS_PROD: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "::error::VERCEL_TOKEN repo/org secret is not set"
+            exit 1
+          fi
+          PROD_FLAG=""
+          if [ "${IS_PROD}" = "true" ]; then PROD_FLAG="--prod"; fi
+          # First run creates the Vercel project under the team scope from the
+          # current directory name; subsequent runs auto-link via git remote.
+          URL=$(vercel deploy ${PROD_FLAG} \
+            --yes \
+            --token="${VERCEL_TOKEN}" \
+            --scope=simonsanglas-projects)
+          echo "url=${URL}" | tee -a "${GITHUB_OUTPUT}"
+          echo "::notice title=Deployment URL::${URL}"
+
+      - name: Comment preview URL on PR
+        if: github.event_name == 'pull_request' && steps.deploy.outputs.url != ''
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
+        with:
+          script: |
+            const url = '${{ steps.deploy.outputs.url }}';
+            const marker = '<!-- pwa-preview-url -->';
+            const body = `${marker}\n📱 **PWA preview deployed:** ${url}\n\nOn iPhone: open in Safari → Share → Add to Home Screen.`;
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body && c.body.includes(marker)
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                comment_id: existing.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            }
