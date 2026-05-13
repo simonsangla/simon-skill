@@ -1,6 +1,6 @@
 {
   "name": "simon-productivity",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Simon Sangla's productivity plugin — three-track operator setup (job search + MetricPilot + simon-platform). Forked from Anthropic's productivity plugin with Google (Gmail/Calendar/Drive), Apple Notes, Vercel, GitHub (via gh CLI), Figma, Linear, and Context7 pre-wired into the start and update skills.",
   "author": {
     "name": "Simon Sangla",

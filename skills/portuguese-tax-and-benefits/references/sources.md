@@ -4,6 +4,19 @@ This file lists the authoritative sources to consult when verifying any factual 
 
 ---
 
+## Refresh log
+
+When numeric values, brackets, or implementing diplomas in this skill bundle were last cross-checked against the official sources below. Older entries kept for audit — do not delete.
+
+| Date (YYYY-MM-DD) | Bundle version | Tax / contribution year covered | Anchor diplomas verified | Notes |
+|---|---|---|---|---|
+| 2026-05-13 | 0.4.1 | 2026 (rendimentos 2026 → declared 2027) | Portaria 480-A/2025/1 (IAS €537,13) · DL 139/2025 (RMMG €920) · Lei 73-A/2025 (OE 2026 IRS escalões +3,51%, taxas 2.º–5.º −0,3pp) · Lei 45-A/2024 (IRS Jovem 100/75/50/25 / 55×IAS) · DL 48-D/2024 (IMT Jovem) | Refresh-log section added. No content drift from 0.4.0 — same numeric set. |
+| 2026-05-13 | 0.4.0 | 2026 | (same anchors as 0.4.1) | Full 2026 refresh; new `references/self-employed-seg-social.md`. Shipped via PR #13. |
+
+**Update protocol:** when refreshing this bundle for a new tax year, do all of (a) verify every anchored value against the diploma cited (DRE consolidated text, not summaries), (b) update each reference file's numeric values + their citations, (c) add a new row at the TOP of this table, (d) bump the plugin minor version (yearly refresh = minor; in-year correction = patch).
+
+---
+
 ## Order of authority
 
 For every Portuguese tax / benefit question, the hierarchy is:
