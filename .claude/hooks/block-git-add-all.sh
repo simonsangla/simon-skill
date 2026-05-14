@@ -18,6 +18,11 @@ command -v jq >/dev/null 2>&1 || exit 0
 cmd="$(jq -r '.tool_input.command // ""' 2>/dev/null)"
 [ -n "$cmd" ] || exit 0
 
+# Skip enforcement when the command cd's outside CLAUDE_PROJECT_DIR — this hook
+# only governs the active project, not unrelated repos visited in the same session.
+[ -n "${CLAUDE_PROJECT_DIR:-}" ] && [[ "$cmd" =~ cd[[:space:]]+([^[:space:]\;\&\|]+) ]] \
+  && [[ "${BASH_REMATCH[1]}" != "$CLAUDE_PROJECT_DIR"* ]] && exit 0
+
 # Strip leading whitespace and inspect each statement separated by ; && ||
 # Match patterns for the dangerous variants:
 #   git add .
