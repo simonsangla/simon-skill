@@ -42,9 +42,16 @@ if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
      && [[ "$cmd" =~ ^[[:space:]]*cd[[:space:]]+[\"\']?([^[:space:]\;\&\|\"\']+)[\"\']?[[:space:]]*(\;|\&|\||$) ]]; then
     target="${BASH_REMATCH[1]%/}"
     proj="${CLAUDE_PROJECT_DIR%/}"
+    # Carve-out applies only to ABSOLUTE paths. Relative `cd subdir` or `cd ..`
+    # would change the effective wd to somewhere we cannot evaluate against
+    # $proj without resolving — stay in-scope by default (safe). Without this
+    # guard, a relative target falls to `*) exit 0` and bypasses enforcement
+    # even when the effective wd is inside the project (security-high finding,
+    # claude-config#23).
     case "$target" in
-      "$proj"|"$proj"/*) ;;
-      *) exit 0 ;;
+      "$proj"|"$proj"/*) ;;  # absolute, in-scope → fall through to block
+      /*) exit 0 ;;           # absolute and out-of-scope → allow
+      *) ;;                   # relative or unknown → stay in-scope (safe default)
     esac
   fi
 fi
