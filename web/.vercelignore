@@ -1,6 +1,0 @@
-# Build-time output is regenerated; never upload checked-in stale data
-public/data/
-
-# Tests / scratch
-node_modules/
-.DS_Store

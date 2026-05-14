@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "_comment": "Stub. The real web/ PWA source moved to simonsangla/simon-skill-private (see PR #18 description). This file exists so the Vercel project (configured with rootDirectory='web/' in the dashboard) finds a vercel.json and the skip-build command runs. Remove once Vercel is reconfigured to point at simon-skill-private/web OR disconnected from this repo entirely.",
+  "commandForIgnoringBuildStep": "exit 0"
+}

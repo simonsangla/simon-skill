@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_comment_install": "Rename this file to .claude/settings.json to activate. Activation is a separate (user-approved) step because registering PreToolUse/PostToolUse hooks counts as self-modifying agent configuration.",
-  "_comment_paths": "Absolute paths needed so the global check-hook-script-paths.sh validator (~/.claude/hooks/) can stat them — it does not expand $CLAUDE_PROJECT_DIR. If you have this repo at a different path, edit both commands accordingly.",
+  "_comment_install": "Rename this file to .claude/settings.json to activate the repo-local hooks. Activation is a separate (user-approved) step because registering PreToolUse/PostToolUse hooks counts as self-modifying agent configuration.",
+  "_comment_paths": "Hook paths use $CLAUDE_PROJECT_DIR so the file works regardless of where the repo is cloned. The real .claude/settings.json is gitignored.",
   "hooks": {
     "PostToolUse": [
       {
@@ -9,7 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/simonsangla/projects/simon-productivity/.claude/hooks/check-template-sync.sh",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/check-template-sync.sh",
             "timeout": 5000
           }
         ]
@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/simonsangla/projects/simon-productivity/.claude/hooks/block-git-add-all.sh",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-git-add-all.sh",
             "timeout": 5000
           }
         ]
