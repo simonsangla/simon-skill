@@ -18,10 +18,36 @@ command -v jq >/dev/null 2>&1 || exit 0
 cmd="$(jq -r '.tool_input.command // ""' 2>/dev/null)"
 [ -n "$cmd" ] || exit 0
 
-# Skip enforcement when the command cd's outside CLAUDE_PROJECT_DIR — this hook
-# only governs the active project, not unrelated repos visited in the same session.
-[ -n "${CLAUDE_PROJECT_DIR:-}" ] && [[ "$cmd" =~ cd[[:space:]]+([^[:space:]\;\&\|]+) ]] \
-  && [[ "${BASH_REMATCH[1]}" != "$CLAUDE_PROJECT_DIR"* ]] && exit 0
+# Skip enforcement when the command starts with a single `cd <path>` to a
+# directory outside $CLAUDE_PROJECT_DIR — this hook governs the active project,
+# not unrelated repos visited in the same session.
+#
+# Narrow on purpose to stay safe:
+#   - `cd` must be the first action (anchored to ^) so it actually takes effect
+#     before `git add`
+#   - the command must contain at most one statement-boundary `cd` so a
+#     `cd /tmp && cd $CLAUDE_PROJECT_DIR && git add -A` chain can't bypass
+#   - the comparison uses a `$proj/` boundary so sibling paths like
+#     `/app/web-api` don't match `/app/web`
+#   - one leading single or double quote is stripped so `cd "$proj/sub"` is
+#     compared cleanly
+# Anything more exotic (subshells, variable expansion, multi-cd chains) falls
+# through to the existing block — safe default.
+if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+  # Count statement-boundary `cd` occurrences. `grep -c` would max out at 1
+  # (lines), so use `-o` + `wc -l`. `|| true` inside the brace group neutralises
+  # grep's exit 1 on no-match so pipefail+ERR trap don't fire prematurely.
+  cd_count=$( { printf '%s' "$cmd" | grep -oE '(^|[[:space:]]|;|&&|\|\|)cd[[:space:]]' || true; } | wc -l | tr -d ' ')
+  if [ "$cd_count" = "1" ] \
+     && [[ "$cmd" =~ ^[[:space:]]*cd[[:space:]]+[\"\']?([^[:space:]\;\&\|\"\']+)[\"\']?[[:space:]]*(\;|\&|\||$) ]]; then
+    target="${BASH_REMATCH[1]%/}"
+    proj="${CLAUDE_PROJECT_DIR%/}"
+    case "$target" in
+      "$proj"|"$proj"/*) ;;
+      *) exit 0 ;;
+    esac
+  fi
+fi
 
 # Strip leading whitespace and inspect each statement separated by ; && ||
 # Match patterns for the dangerous variants:
