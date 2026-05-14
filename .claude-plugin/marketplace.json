@@ -1,16 +1,16 @@
 {
-  "name": "simon-productivity",
+  "name": "simon-skill",
   "owner": {
     "name": "Simon Sangla"
   },
   "metadata": {
-    "description": "simon-productivity plugin marketplace",
+    "description": "simon-skill plugin marketplace",
     "version": "0.4.1"
   },
   "plugins": [
     {
-      "name": "simon-productivity",
-      "description": "Three-track productivity plugin (job search + MetricPilot + simon-platform). Forked from Anthropic's productivity plugin, rewired around Simon's actual connectors (Google trio, Apple Notes, Vercel, GitHub via gh, Figma, Linear, Context7) and aware of Scenario A compliance plus simon-platform's §1–§7 execution rules.",
+      "name": "simon-skill",
+      "description": "Opinionated Claude Code plugin packaging six SKILL.md skills: bump-version (atomic SemVer bump), start (folder-agnostic init), update (multi-source sync), memory-management (CLAUDE.md hot-cache + memory/), task-management (TASKS.md format), portuguese-tax-and-benefits (PT tax + benefits operating manual).",
       "version": "0.4.1",
       "source": "./",
       "author": {

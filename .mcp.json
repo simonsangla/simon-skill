@@ -5,7 +5,7 @@
       "url": "https://mcp.slack.com/mcp",
       "oauth": {
         "clientId": "",
-        "callbackPort": ""
+        "callbackPort": 0
       }
     },
     "notion": {
