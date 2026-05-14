@@ -1,16 +1,38 @@
 ---
 name: start
-description: Initialize a productivity workspace in the current folder, or scaffold a fresh Claude Code plugin source repo. Bootstraps TASKS.md / CLAUDE.md / memory/ if missing, opens the dashboard, and optionally runs a comprehensive scan across Gmail, Google Calendar, Google Drive, Apple Notes, Vercel, and GitHub. Inherits context upward from any parent CLAUDE.md so the same command behaves correctly in any directory. When invoked with `plugin` in an empty git repo, scaffolds LICENSE + CI + .claude-plugin manifests + Dependabot instead.
+description: Use when initializing a productivity workspace in the current folder, or scaffolding a fresh Claude Code plugin source repo. Bootstraps `TASKS.md` / `CLAUDE.md` / `memory/` if missing, opens the dashboard, and optionally runs a multi-source scan across Gmail, Calendar, Drive, Notes, Vercel, and GitHub. Inherits context upward from any parent `CLAUDE.md` so the same command behaves correctly in any directory. When invoked with `plugin` in an empty git repo, scaffolds LICENSE + CI + `.claude-plugin` manifests + Dependabot instead.
+argument-hint: plugin (optional — only for plugin-scaffold mode)
 ---
 
-# Start (simon-skill)
+# start
 
-> Connector reference: [CONNECTORS.md](../../CONNECTORS.md).
+User-invocable side-effect skill. Two sub-modes — generic init (`/simon-skill:start`) and plugin scaffold (`/simon-skill:start plugin` in an empty git repo). The two modes never chain into each other; each completes with a clean working tree and a printed next-step instruction.
 
-Initialize the task and memory systems in the current folder, then open the dashboard. The skill is **folder-agnostic** — it operates on whatever directory it's invoked from and inherits richer context from any parent `CLAUDE.md` it can find. Two special cases override the generic flow:
+## Cavekit conformance
 
-- **Plugin source repo** (a `.claude-plugin/plugin.json` is present, OR the user passed `plugin` and the repo is empty) — see §1a.
-- **Workspace root** (the `CLAUDE.md` in the current folder declares concurrent sub-projects) — the skill summarizes them rather than treating the folder as a single project.
+This skill is the worked instance of `context/kits/cavekit-invocable-skills.md` R2, anchored to `context/kits/cavekit-skill-contract.md` R1 (frontmatter) and R4 (invocation-mode classification — user-invocable).
+
+| Kit | Requirement | How this skill satisfies it |
+|---|---|---|
+| skill-contract | R1 (frontmatter) | `name`, `description`, `argument-hint` set in YAML above. No `disable-model-invocation` and no `user-invocable: false` — default user-invocable mode. |
+| skill-contract | R4 (invocation classification) | User-invocable (default — no flag). Both the user (via `/simon-skill:start`) and Claude may invoke. Side effects are permitted; safe-failure modes documented below. |
+| invocable-skills | R2 ACC1 (generic mode: create only when absent) | §3 "Create what's missing" creates `TASKS.md`, `CLAUDE.md`, `memory/`, and `dashboard.html` only when each is absent; pre-existing files at those paths are never overwritten. |
+| invocable-skills | R2 ACC2 (generic mode: hard-rule text from parent `CLAUDE.md` chain appears verbatim) | §6 "Bootstrap memory" reads every `CLAUDE.md` on the upward parent chain and surfaces hard-rule text verbatim in the newly written local `CLAUDE.md`. |
+| invocable-skills | R2 ACC3 (plugin-scaffold mode: abort when cwd not near-empty) | §1a sub-case B step 1 aborts when cwd contains anything beyond `.git/`, `.gitignore`, and a single `README.md`. |
+| invocable-skills | R2 ACC4 (plugin-scaffold mode: clean working tree + scaffold commit after) | §1a sub-case B step 6 stages the scaffold files explicitly and commits with `chore: bootstrap plugin repo (…)`; no `git add -A`. After commit, `git status --porcelain` is empty. |
+| invocable-skills | R2 ACC5 (plugin-scaffold mode: prints follow-ups, does not chain) | §1a sub-case B step 7 prints follow-ups and stops; no chaining into the generic flow. |
+| invocable-skills | R2 ACC6 (connector failure reported, skill exits 0) | §6 + "Notes" — `gh auth status` failure is reported once and skipped; Apple Notes MCP unavailability is skipped silently. The skill itself does not exit non-zero on connector failure. |
+
+Safe-failure modes (per skill-contract R4 — user-invocable side-effect skills must document them):
+
+- **Plugin-scaffold mode + cwd not near-empty** → abort before any write; prompt the user to confirm or clean the directory.
+- **`gh auth status` fails** → report once, continue without GitHub source (does not abort the skill).
+- **Apple Notes MCP unavailable** (non-desktop runtime) → skip silently; no error surfaced.
+- **`{{PLUGIN_NAME}}` does not match `^[a-z][a-z0-9-]+$`** → prompt the user instead of writing an invalid manifest.
+
+## Connectors
+
+The full connector reference (what each source provides, MCP names, auth status) lives in `CONNECTORS.md` at the plugin repo root. Read it for a complete picture; this skill exercises a subset (Gmail, Calendar, Drive, Notes, Vercel, GitHub) and degrades gracefully when any connector is unavailable.
 
 ## Instructions
 
@@ -20,7 +42,7 @@ Check, in order:
 
 1. **`.claude-plugin/plugin.json` exists in cwd** → plugin source repo (established). Jump to §1a, sub-case A.
 2. **`plugin` argument passed AND `.claude-plugin/` is absent AND cwd is a git repo** → bootstrap a new plugin repo. Jump to §1a, sub-case B.
-3. **Otherwise** → generic flow (§2 onward). The "right" behavior is parameterized by what the folder's own `CLAUDE.md` says, plus whatever parent `CLAUDE.md` files exist further up the path.
+3. **Otherwise** → generic flow (§2 onward). The "right" behavior is parameterised by what the folder's own `CLAUDE.md` says, plus whatever parent `CLAUDE.md` files exist further up the path.
 
 State to the user which mode is active before doing anything else.
 
@@ -30,7 +52,7 @@ A **Claude Code plugin source repo**. Two sub-cases:
 
 **A. `.claude-plugin/plugin.json` already exists** — repo is an established plugin. Skip scaffold. Run plugin-dev init: ensure `TASKS.md`, `CLAUDE.md`, and `memory/` exist at repo root for plugin-dev backlog tracking. **Do NOT create a root-level `dashboard.html`** — for plugin repos, the dashboard (if any) is a plugin asset at `skills/dashboard.html` that ships with the plugin. If the user wants the visual board, they open `skills/dashboard.html` directly. The "Open the dashboard" step (§4) is skipped for this track.
 
-**B. User passed `plugin` argument AND `.claude-plugin/` is absent** — bootstrap a new plugin repo. Run the scaffold steps below. **Do not continue into the normal init flow afterward** — scaffold ends with a clean working tree; user opts into plugin-dev init by running `/simon-skill:start` again (no args) when they want TASKS.md + memory/ created.
+**B. User passed `plugin` argument AND `.claude-plugin/` is absent** — bootstrap a new plugin repo. Run the scaffold steps below. **Do not continue into the normal init flow afterward** — scaffold ends with a clean working tree; user opts into plugin-dev init by running `/simon-skill:start` again (no args) when they want `TASKS.md` + `memory/` created.
 
 #### Scaffold steps (sub-case B only)
 
@@ -89,7 +111,7 @@ Treat this as a `repo-bootstrap`-style operation. Templates live at `${CLAUDE_PL
 7. **Surface follow-ups** (do not auto-execute):
    - Branch protection requires public repo or GitHub Pro. If repo is private on free plan, note this and tell the user to flip via `gh repo edit --visibility public` when ready.
    - Recommend opening PR-mode workflow from this point: every subsequent change goes via branch + PR, no direct push to main.
-   - Tell the user: "Scaffold done. Run `/simon-skill:start` again (no args) when you want a plugin-dev TASKS.md + memory/ at repo root, or just start adding skills under `skills/<name>/SKILL.md` first."
+   - Tell the user: "Scaffold done. Run `/simon-skill:start` again (no args) when you want a plugin-dev `TASKS.md` + `memory/` at repo root, or just start adding skills under `skills/<name>/SKILL.md` first."
 
 **Stop after step 7.** Do NOT chain into the normal init flow. The scaffold commit must leave a clean working tree. Sub-case A (next invocation) handles plugin-dev init separately.
 
@@ -102,12 +124,14 @@ In the current working directory, check for:
 - `memory/` — deep memory directory
 - `dashboard.html` — the visual UI
 
-**Then walk the directory chain upward** looking for additional `CLAUDE.md` files. Read each one you find — they describe the broader workspace (organizational rules, people, projects, compliance gates) and the bootstrap step in §6 should inherit from them rather than re-prompt for context the user has already written down.
+**Then walk the directory chain upward** looking for additional `CLAUDE.md` files. Read each one you find — they describe the broader workspace (organisational rules, people, projects, compliance gates) and the bootstrap step in §6 should inherit from them rather than re-prompt for context the user has already written down.
 
 ### 3. Create what's missing
 
+Each entry is created **only when absent**. Pre-existing files at those paths are never overwritten — this protects in-flight user state and is the AC the kit pins.
+
 - **`TASKS.md` missing:** Create from the `task-management` skill template. Place it in the working directory.
-- **`dashboard.html` missing:** Copy it from `${CLAUDE_PLUGIN_ROOT}/skills/dashboard.html` into the working directory. **Skip this for the Plugin source track** — plugin repos don't get a root-level dashboard.html; the dashboard ships as a plugin asset under `skills/`.
+- **`dashboard.html` missing:** Copy it from `${CLAUDE_PLUGIN_ROOT}/skills/dashboard.html` into the working directory. **Skip this for the Plugin source track** — plugin repos don't get a root-level `dashboard.html`; the dashboard ships as a plugin asset under `skills/`.
 - **`CLAUDE.md` + `memory/` missing:** First-run. Continue to step 6 (bootstrap) after opening the dashboard.
 
 ### 4. Open the dashboard
@@ -119,7 +143,7 @@ Do NOT run `open` or `xdg-open` — Claude runs sandboxed and shell-open command
 
 ### 5. Orient the user
 
-If everything was already initialized:
+If everything was already initialised:
 
 ```
 Workspace initialized.
@@ -135,11 +159,11 @@ Only if `CLAUDE.md` and `memory/` are absent in the working directory.
 
 **Always inherit upward first.** Read every `CLAUDE.md` you found on the upward walk in §2 — they typically declare the people, projects, terms, hard rules, and compliance gates that govern this folder. Pull all of that forward into the new `CLAUDE.md` you're about to write. Only ask the user about things you genuinely cannot derive.
 
-If a parent `CLAUDE.md` declares a **hard rule** (e.g. a compliance gate, a verification policy, an execution-quality bar), surface it explicitly in the new `CLAUDE.md` so the user can see it inherited. Never silently drop hard rules — that's the point of having them written down upstream.
+If a parent `CLAUDE.md` declares a **hard rule** (a compliance gate, a verification policy, an execution-quality bar), surface it explicitly in the new `CLAUDE.md` so the user can see it inherited. The hard-rule text appears verbatim in the local `CLAUDE.md` — never silently drop or paraphrase a rule, that's the point of having them written down upstream.
 
 **Then run a multi-source scan** — present what was found, ask the user to confirm/extend. Adapt each source to what the parent `CLAUDE.md` declares as relevant:
 
-- **Gmail** — search recent threads (sent + received). If the parent `CLAUDE.md` lists key people or organizations, narrow the search to those.
+- **Gmail** — search recent threads (sent + received). If the parent `CLAUDE.md` lists key people or organisations, narrow the search to those.
 - **Google Calendar** — list upcoming + recent events with attendees. Surface recurring meetings, interview slots, gate-relevant appointments (any meeting the parent `CLAUDE.md` flags as compliance-relevant).
 - **Google Drive** — if the parent `CLAUDE.md` names specific folders (by ID or path), check those. Otherwise list recently modified files in the root.
 - **Apple Notes** — check anything the parent `CLAUDE.md` names as a relevant pile (desktop-only MCP; skip silently if unavailable).
@@ -175,4 +199,4 @@ Use /simon-skill:update to keep things current.
 - Apple Notes is desktop-only; skip silently if the MCP is unavailable in this session.
 - GitHub has no remote MCP — use `gh` CLI directly. If `gh auth status` fails, report once and continue without GitHub.
 - Vercel MCP exposes deployments + runtime logs; very useful for discovering active surfaces.
-- Never auto-fill the status of any compliance gate inherited from a parent CLAUDE.md — those are user-controlled and must be flagged rather than ticked.
+- Never auto-fill the status of any compliance gate inherited from a parent `CLAUDE.md` — those are user-controlled and must be flagged rather than ticked.
