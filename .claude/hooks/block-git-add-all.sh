@@ -42,16 +42,20 @@ if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
      && [[ "$cmd" =~ ^[[:space:]]*cd[[:space:]]+[\"\']?([^[:space:]\;\&\|\"\']+)[\"\']?[[:space:]]*(\;|\&|\||$) ]]; then
     target="${BASH_REMATCH[1]%/}"
     proj="${CLAUDE_PROJECT_DIR%/}"
-    # Carve-out applies only to ABSOLUTE paths. Relative `cd subdir` or `cd ..`
-    # would change the effective wd to somewhere we cannot evaluate against
-    # $proj without resolving — stay in-scope by default (safe). Without this
-    # guard, a relative target falls to `*) exit 0` and bypasses enforcement
-    # even when the effective wd is inside the project (security-high finding,
-    # claude-config#23).
+    # Carve-out applies only to ABSOLUTE paths free of unresolved components.
+    # - Relative `cd subdir` would change the effective wd to somewhere we
+    #   cannot evaluate against $proj without resolving — stay in-scope
+    #   (claude-config#23 — bypass class #5).
+    # - Absolute paths containing `..` or `/.` segments (e.g.
+    #   `/tmp/../project`) resolve to a different real path than the literal
+    #   string match suggests — they can re-enter the project, so the safe
+    #   default is to fall through to enforcement (simon-skill#21 — bypass
+    #   class #6, Gemini security-high).
     case "$target" in
-      "$proj"|"$proj"/*) ;;  # absolute, in-scope → fall through to block
-      /*) exit 0 ;;           # absolute and out-of-scope → allow
-      *) ;;                   # relative or unknown → stay in-scope (safe default)
+      "$proj"|"$proj"/*) ;;       # absolute, in-scope literal → fall through to block
+      *..*|*/.*) ;;               # absolute path with unresolved `..` or `/.` → stay in-scope
+      /*) exit 0 ;;                # absolute, out-of-scope, fully resolved → allow
+      *) ;;                        # relative or unknown → stay in-scope (safe default)
     esac
   fi
 fi
