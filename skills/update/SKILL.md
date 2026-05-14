@@ -4,7 +4,7 @@ description: Sync tasks and refresh memory from current activity. Pulls from Git
 argument-hint: "[--comprehensive]"
 ---
 
-# Update (simon-productivity)
+# Update (simon-skill)
 
 > Connector reference: [CONNECTORS.md](../../CONNECTORS.md).
 
@@ -18,8 +18,8 @@ Two modes:
 ## Usage
 
 ```bash
-/simon-productivity:update
-/simon-productivity:update --comprehensive
+/simon-skill:update
+/simon-skill:update --comprehensive
 ```
 
 ## Scope of external-source checks
@@ -39,7 +39,7 @@ If no parent `CLAUDE.md` is present, fall back to broad sweeps (last 7 days ever
 
 Read `TASKS.md` and the `memory/` directory in the working directory. Walk the directory chain upward; read every `CLAUDE.md` you find along the way — they declare the rules, people, and surfaces this folder operates under.
 
-If `TASKS.md` or `memory/` is absent, suggest `/simon-productivity:start` first and stop.
+If `TASKS.md` or `memory/` is absent, suggest `/simon-skill:start` first and stop.
 
 ### 2. Sync tasks from external sources
 

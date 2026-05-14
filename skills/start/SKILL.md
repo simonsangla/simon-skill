@@ -3,7 +3,7 @@ name: start
 description: Initialize a productivity workspace in the current folder, or scaffold a fresh Claude Code plugin source repo. Bootstraps TASKS.md / CLAUDE.md / memory/ if missing, opens the dashboard, and optionally runs a comprehensive scan across Gmail, Google Calendar, Google Drive, Apple Notes, Vercel, and GitHub. Inherits context upward from any parent CLAUDE.md so the same command behaves correctly in any directory. When invoked with `plugin` in an empty git repo, scaffolds LICENSE + CI + .claude-plugin manifests + Dependabot instead.
 ---
 
-# Start (simon-productivity)
+# Start (simon-skill)
 
 > Connector reference: [CONNECTORS.md](../../CONNECTORS.md).
 
@@ -30,7 +30,7 @@ A **Claude Code plugin source repo**. Two sub-cases:
 
 **A. `.claude-plugin/plugin.json` already exists** — repo is an established plugin. Skip scaffold. Run plugin-dev init: ensure `TASKS.md`, `CLAUDE.md`, and `memory/` exist at repo root for plugin-dev backlog tracking. **Do NOT create a root-level `dashboard.html`** — for plugin repos, the dashboard (if any) is a plugin asset at `skills/dashboard.html` that ships with the plugin. If the user wants the visual board, they open `skills/dashboard.html` directly. The "Open the dashboard" step (§4) is skipped for this track.
 
-**B. User passed `plugin` argument AND `.claude-plugin/` is absent** — bootstrap a new plugin repo. Run the scaffold steps below. **Do not continue into the normal init flow afterward** — scaffold ends with a clean working tree; user opts into plugin-dev init by running `/simon-productivity:start` again (no args) when they want TASKS.md + memory/ created.
+**B. User passed `plugin` argument AND `.claude-plugin/` is absent** — bootstrap a new plugin repo. Run the scaffold steps below. **Do not continue into the normal init flow afterward** — scaffold ends with a clean working tree; user opts into plugin-dev init by running `/simon-skill:start` again (no args) when they want TASKS.md + memory/ created.
 
 #### Scaffold steps (sub-case B only)
 
@@ -89,7 +89,7 @@ Treat this as a `repo-bootstrap`-style operation. Templates live at `${CLAUDE_PL
 7. **Surface follow-ups** (do not auto-execute):
    - Branch protection requires public repo or GitHub Pro. If repo is private on free plan, note this and tell the user to flip via `gh repo edit --visibility public` when ready.
    - Recommend opening PR-mode workflow from this point: every subsequent change goes via branch + PR, no direct push to main.
-   - Tell the user: "Scaffold done. Run `/simon-productivity:start` again (no args) when you want a plugin-dev TASKS.md + memory/ at repo root, or just start adding skills under `skills/<name>/SKILL.md` first."
+   - Tell the user: "Scaffold done. Run `/simon-skill:start` again (no args) when you want a plugin-dev TASKS.md + memory/ at repo root, or just start adding skills under `skills/<name>/SKILL.md` first."
 
 **Stop after step 7.** Do NOT chain into the normal init flow. The scaffold commit must leave a clean working tree. Sub-case A (next invocation) handles plugin-dev init separately.
 
@@ -123,8 +123,8 @@ If everything was already initialized:
 
 ```
 Workspace initialized.
-- /simon-productivity:update to sync tasks + memory
-- /simon-productivity:update --comprehensive for a deep multi-source scan
+- /simon-skill:update to sync tasks + memory
+- /simon-skill:update --comprehensive for a deep multi-source scan
 ```
 
 Stop here unless a bootstrap is needed.
@@ -165,7 +165,7 @@ Connectors expected but unavailable: [list, e.g. "GitHub (gh CLI not authed)", "
 
 Hard rules inherited from parent CLAUDE.md: [list, or "none"]
 
-Use /simon-productivity:update to keep things current.
+Use /simon-skill:update to keep things current.
 ```
 
 ## Notes
