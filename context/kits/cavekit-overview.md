@@ -6,7 +6,7 @@ last_edited: "2026-05-14"
 # Cavekit Overview
 
 ## Project
-simon-skill — opinionated Claude Code plugin packaging SKILL.md skills for productivity workflows and PT-freelancer tax/benefits guidance. Repo at github.com/simonsangla/simon-skill (renamed from simon-productivity 2026-05-14).
+simon-skill — opinionated Claude Code plugin packaging SKILL.md skills for productivity workflows and PT-freelancer tax/benefits guidance. GitHub repo: `simonsangla/simon-skill`. Plugin manifests still declare `simon-productivity` on this branch — the manifest rename is part of in-flight PR #18 (PR2 rename + sanitize). Treat the manifest name as transitional until that PR merges.
 
 ## Domain Index
 | Domain | Cavekit File | Requirements | Status | Description |
