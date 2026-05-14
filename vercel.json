@@ -1,5 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "_comment": "The web/ PWA source moved to simonsangla/simon-skill-private in PR2. The Vercel project (configured with rootDirectory='web/' in the dashboard) should be relinked to simon-skill-private/web. Until then, this config skips builds on this public repo so CI doesn't report Vercel as failed. Remove this file once Vercel is disconnected from this repo OR re-pointed elsewhere.",
-  "commandForIgnoringBuildStep": "exit 0"
-}
