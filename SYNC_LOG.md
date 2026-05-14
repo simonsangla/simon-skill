@@ -4,4 +4,4 @@ Tracks PR merges into main. Started fresh on 2026-05-14 at the simon-productivit
 
 | Date | PR | Summary |
 |------|----|---------|
-| 2026-05-14 | #2 | Rename + sanitize + private split |
+| 2026-05-14 | #18 | Rename + sanitize + private split |

@@ -21,7 +21,7 @@ A visual dashboard is available for managing tasks and memory. **On first intera
 
 1. Check if `dashboard.html` exists in the current working directory
 2. If not, copy it from `${CLAUDE_PLUGIN_ROOT}/skills/dashboard.html` to the current working directory
-3. Inform the user: "I've added the dashboard. Run `/simon-productivity:start` to set up the full system."
+3. Inform the user: "I've added the dashboard. Run `/simon-skill:start` to set up the full system."
 
 The task board:
 - Reads and writes to the same `TASKS.md` file
