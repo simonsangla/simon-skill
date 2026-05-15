@@ -10,6 +10,7 @@ When numeric values, brackets, or implementing diplomas in this skill bundle wer
 
 | Date (YYYY-MM-DD) | Bundle version | Tax / contribution year covered | Anchor diplomas verified | Notes |
 |---|---|---|---|---|
+| 2026-05-15 | 0.5.0 | 2026 campaign (rendimentos 2025) | Portaria 104/2026/1 (Modelo 3 + Anexo A 2026 — Quadro 4 column order, CodRendimentos 401-419 / 421-424) | Modelo 3 upload-XML capability (`references/modelo3-xml.md` + `assets/modelo3-edit.py`), shipped via PRs #34-36 — logged retroactively. Skill-audit corrections this PR: Cat B retention 25%→23%, IRS Jovem education-requirement removed from clarifying-questions, subsídio-parcial IAS-threshold misframing fixed, property-tax thresholds de-anchored from PwC to EBF/CIMI. |
 | 2026-05-13 | 0.4.1 | 2026 (rendimentos 2026 → declared 2027) | Portaria 480-A/2025/1 (IAS €537,13) · DL 139/2025 (RMMG €920) · Lei 73-A/2025 (OE 2026 IRS escalões +3,51%, taxas 2.º–5.º −0,3pp) · Lei 45-A/2024 (IRS Jovem 100/75/50/25 / 55×IAS) · DL 48-D/2024 (IMT Jovem) | Refresh-log section added. No content drift from 0.4.0 — same numeric set. |
 | 2026-05-13 | 0.4.0 | 2026 | (same anchors as 0.4.1) | Full 2026 refresh; new `references/self-employed-seg-social.md`. Shipped via PR #13. |
 
@@ -63,6 +64,7 @@ These are the *headline* diplomas governing the 2026 numbers used across the ski
 | **Lei n.º 45-A/2024, de 31 de dezembro** | OE 2025 — restructured IRS Jovem (100/75/50/25 over 10y, age 35, no education requirement) | — |
 | **Decreto-Lei n.º 48-D/2024** | IMT Jovem regime (full exemption to €330 539 in 2026, 8% to €660 982, plus IS & emolumentos) | — |
 | **Lei n.º 82/2023, de 29 de dezembro** | OE 2024 — closes NHR to new entrants from 2024; creates IFICI at Art. 58.º-A EBF | — |
+| **Portaria n.º 104/2026/1, de 5 de março** | Modelo 3 IRS + Anexo A/B/C/D/H/J 2026 campaign (rendimentos 2025) — forms, instruções de preenchimento, Quadro 4 column order, `CodRendimentos` tables | — |
 
 ### IFICI implementing chain (fully published)
 - **Portaria n.º 352/2024/1, de 23 de dezembro** — main IFICI regulation (Anexo I profissões altamente qualificadas, Anexo II CAE codes).
