@@ -26,11 +26,16 @@ Safe-failure modes (per skill-contract R4 — user-invocable skills must documen
 - **Decisive fact missing or ambiguous** (residency status, age, contract type) → ask before answering; do not invent the user's status to produce a tidier answer.
 - **Question spans a regime change mid-period** (e.g. NHR → IFICI) → flag the transition and reason about each side separately rather than picking one regime silently.
 
-## Why this skill exists
+## Common mistakes — do not do these
 
-LLM training data on Portuguese tax and benefit law is almost certainly stale. Brackets, IAS-indexed thresholds, IMT bands, IRS Jovem percentages, AIMI rates, IRS scale rates, and benefit ceilings change at least annually — usually via the *Orçamento do Estado* (state budget) for the following year, often with mid-year corrections in *Diário da República*. Quoting a remembered number from training is the most dangerous failure mode here. The skill exists to prevent that.
-
-The second failure mode is generic legal-advice theatre — long answers that read as authoritative but never name a source, hedge on everything, and leave the user worse off than a five-minute search on `portaldasfinancas.gov.pt` would. Don't do that either.
+| Mistake | Why it causes harm | Fix |
+|---|---|---|
+| **Quoting a remembered number** (rate, bracket, IAS-indexed threshold, IMT band, benefit ceiling) | PT tax values change every *Orçamento do Estado*; often mid-year corrections in *Diário da República* too. User acts on a stale figure. | Look it up from an official source. If unavailable, describe the rule's structure and name exactly which page to check. |
+| **Generic legal-advice theatre** — long answer, sounds authoritative, no source named, hedges everything | Leaves user worse off than a five-minute search on `portaldasfinancas.gov.pt`. | Name a source. Name the specific professional and the specific question, or admit you can't verify. |
+| **Skipping fact-dependencies** — answering without knowing residency status, age, contract type, property use, contribution history | Many PT rules bifurcate hard on these facts. A correct answer for one profile is wrong for another. | Ask first. See `references/clarifying-questions.md`. |
+| **Collapsing the 6-section output** — merging Facts+Analysis, skipping Risks because the answer "feels safe" | Hides assumptions; user can't tell what you verified vs inferred. | Use every section. Risks always contains at least "I could not verify X" and any unresolved fact-dependency. |
+| **Citing unofficial blogs as the authority** | Blog numbers may be stale or wrong; user loses the audit trail to the primary source. | Use canonical URLs from `references/sources.md`. Blogs can illustrate, not anchor. |
+| **Confusing the pluriactividade SS-exemption ceiling with the subsídio parcial compatibility test** — e.g. stating "rendimento relevante must stay below 1×IAS (≈ €767/mês brut for services)" as the limit for combining independent work with subsídio de desemprego | The 1×IAS / 4×IAS thresholds in Art. 158.º CRCSPSS apply to the SS *contribution-exemption* for a TI who is *also* a Regime Geral employee — entirely unrelated to subsídio parcial. The parcial compatibility test (Art. 59.º DL 220/2006) is simply: **rendimento relevante < user's subsídio value**. For the 2026 cap of €1.342,83, the brut ceiling is ≈ €1.918/mês — 2.5× higher than €767. Applying the wrong threshold causes the user to forgo ~€1.100/mês of legitimate earnings. | Cite both rules and their statutory sources separately. Never cross-apply them. |
 
 ## Core operating principles
 
