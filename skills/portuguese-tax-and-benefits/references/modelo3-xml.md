@@ -209,10 +209,10 @@ pick a code by analogy — the distinctions (subject to retention or not,
 4. **Recompute every affected `SomaC0x`** total.
 5. **Preserve element order and the default namespace.**
 6. **Validate against the official XSD:**
-   `xmllint --noout --schema Modelo3IRSv2026.xsd file.xml`. The XSD is named in
-   the file's `schemaLocation`; download it from the Portal alongside the
-   declaration. If the XSD `<xs:include>`s other schema files, keep them in the
-   same folder.
+   `xmllint --noout --schema Modelo3IRSv2026.xsd file.xml`. The v2026 schema is
+   a **two-file set** — `Modelo3IRSv2026.xsd` `<xs:include>`s `types.xsd`;
+   download both and keep them in the same folder, or validation fails on the
+   missing include. The XSD is named in the file's `schemaLocation`.
 7. **Import the validated file through the Portal** so the server-side
    *validações* run, then submit.
 
@@ -285,9 +285,10 @@ the golden rule).
 - **Modelo 3 — IRS**, Portal das Finanças — the declaration application and the
   save / read-XML feature (no publication date displayed):
   <https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Modelo_3/>
-- **`Modelo3IRSv2026.xsd`** — the schema to validate the upload file against.
-  The AT publishes it on the Portal das Finanças under *Serviços Tributários →
-  Outros Serviços → Formato de Ficheiros* (*Suporte Informático — Formato de
-  ficheiros*). It is not a stable public deep link; obtain the file for the
-  current campaign year. Schemas for earlier years (v2014–v2016) are **not**
-  valid for a 2026 declaration.
+- **`Modelo3IRSv2026.xsd`** (+ `types.xsd`) — the schema to validate the upload
+  file against, distributed as a two-file set (`Modelo3IRSv2026.xsd`
+  `<xs:include>`s `types.xsd`). The AT publishes both on the Portal das Finanças
+  under *Serviços Tributários → Outros Serviços → Formato de Ficheiros*
+  (*Suporte Informático — Formato de ficheiros*). It is not a stable public deep
+  link; obtain the files for the current campaign year. Schemas for earlier
+  years (v2014–v2016) are **not** valid for a 2026 declaration.
