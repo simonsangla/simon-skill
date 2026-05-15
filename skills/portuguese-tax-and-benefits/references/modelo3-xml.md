@@ -234,7 +234,7 @@ It deliberately **refuses** to:
   case goes to the Portal UI.
 
 It **never computes tax** and **never invents a value** — it only moves the
-values passed on the command line, then recomputes `SomaC01..C04`.
+values passed on the command line, then recomputes `SomaC01..C05`.
 
 Example — correct the income on line 2, preview first, then write:
 

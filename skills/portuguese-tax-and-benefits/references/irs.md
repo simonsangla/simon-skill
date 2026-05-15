@@ -204,7 +204,7 @@ To qualify, expenses must generally be linked to a Portuguese NIF in e-Fatura. F
 
 Estimated-tax / withholding interactions:
 - Categoria A: employer withholds via monthly retention tables.
-- Categoria B: clients withhold (typically 25% for services to taxpayers required to keep accounts) unless the taxpayer is dispensed under Article 101.º-B CIRS.
+- Categoria B: clients with contabilidade organizada withhold at source on services — **23%** on Article 151.º-CIRS listed activities since OE 2025 (see §8) — unless the taxpayer is dispensed under Article 101.º-B CIRS.
 - Categoria E/F: withholding by the payer.
 
 The annual return reconciles withholding to the actual tax due.

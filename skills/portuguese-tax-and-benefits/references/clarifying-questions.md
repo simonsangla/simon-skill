@@ -36,8 +36,8 @@ This file is organised by domain. For cross-domain questions, walk through each 
 
 ### IRS Jovem / IFICI
 18. Date of birth.
-19. Year first earned Categoria A or B income after completing qualifying education.
-20. Highest qualification and year completed.
+19. Year first earned Categoria A or B income **as a non-dependent** — this starts the 10-year IRS Jovem window. There is **no education requirement** (the ensino-secundário condition was abolished by OE 2025); do not ask about qualifications as an eligibility gate.
+20. Years (if any) the user was a **dependent** in another household's IRS while earning Categoria A/B income — those years do not count toward the 10-year window.
 21. Prior years already benefited from IRS Jovem under any version?
 22. For IFICI: nature of activity, qualifying R&D / higher-ed / other listed activity?
 
@@ -87,7 +87,7 @@ This file is organised by domain. For cross-domain questions, walk through each 
 46. Is atividade currently open at Finanças? When opened or closed?
 47. Has any ACPE (Apoio à Criação do Próprio Emprego) request been filed? Status?
 48. Expected first month of revenue under the new activity?
-49. Expected monthly revenue range — under IAS, between 1× and 1.5× IAS, above 1.5× IAS?
+49. Expected monthly *rendimento relevante* from the activity (services receipts × 0,70, or goods/hotelaria × 0,20) — and how it compares to the user's own monthly subsídio value. That comparison, **not any IAS multiple**, is the subsídio parcial compatibility test (see `iefp-seg-social.md` §3).
 50. Recurring vs one-off clients? Single dominant client?
 
 ### Compatibility
@@ -105,7 +105,7 @@ This file is organised by domain. For cross-domain questions, walk through each 
 55. **If receiving subsídio de desemprego and considering Categoria B**:
    - Has ACPE been considered?
    - Is the user willing to declare proactively via Segurança Social Direta?
-   - What is the *expected* monthly income vs the compatibility IAS-multiple threshold?
+   - What is the *expected* monthly *rendimento relevante*, and is it below the user's monthly subsídio value? (The parcial compatibility test is rendimento relevante < subsídio — there is no IAS-multiple threshold.)
    - Is there a "*emprego conveniente*" offer outstanding from IEFP?
 
 56. **If buying property while unemployed**:

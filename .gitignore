@@ -13,6 +13,8 @@ Thumbs.db
 # Active hook registration — gitignored so cloning the repo does not silently
 # enable hooks before review. The committed template is .claude/settings.json.example.
 .claude/settings.json
+# Runtime lock for the scheduled-tasks MCP — process artifact, never committed.
+.claude/scheduled_tasks.lock
 
 # Secrets (defense in depth — should never exist here, but blocking just in case)
 .env

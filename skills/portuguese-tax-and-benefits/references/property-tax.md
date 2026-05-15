@@ -31,7 +31,7 @@ Key handle: a property owner can request **avaliação geral** every 3 years fro
 
 ### IMI exemptions
 Several statutory exemptions; the most commonly asked about:
-1. **Habitação própria e permanente, low-VPT**: temporary IMI exemption for the family's primary residence when the VPT and the household's taxable income are both below statutory thresholds. The exemption runs for a limited number of years. **2026 thresholds (per PwC Guia Fiscal 2026 + AT Tabelas Práticas)**: VPT ≤ **€125 000** for the property itself (the HPP-low-value test for the IMI exemption) and total household gross income ≤ **€153 300**. Verify on AT before relying — these are revised periodically. The duration of the exemption is set by Art. 46.º EBF.
+1. **Habitação própria e permanente, low-VPT**: temporary IMI exemption for the family's primary residence when the VPT and the household's taxable income are both below statutory thresholds. The exemption runs for a limited number of years. **2026 thresholds** — verify against **Art. 46.º EBF** consolidated on DRE (which also sets the exemption's duration) and the AT IMI page before relying on them: VPT ≤ **€125 000** for the property itself (the HPP-low-value test for the IMI exemption) and total household gross income ≤ **€153 300**. These are revised periodically.
 2. **Urban rehabilitation**: properties inside **Áreas de Reabilitação Urbana (ARU)** that have undergone qualifying works can obtain IMI exemption for a fixed period after works completion, plus other benefits. Application is through the câmara municipal + AT.
 3. **Permanent residence acquired by low-income households**: separate from (1), conditioned on household composition and income.
 4. **Forest / nature-protected properties**, properties affected by natural disaster, properties classified as cultural heritage — case-specific.
@@ -73,7 +73,7 @@ Many *câmaras municipais* opt in to **IMI Familiar**: a fixed-euro deduction pe
 ### AIMI interaction with IRS Categoria F
 Residents holding rental property pay AIMI **in addition to** Categoria F income tax — the AIMI paid is **creditable / deductible** against the IRS coleta corresponding to rental income from properties subject to AIMI (Art. 135.º-I CIMI). The option is annual; choosing it forfeits the equivalent deduction in IRC for self-employed accounting purposes. **Verify Art. 135.º-I CIMI** on DRE before relying on this — the article has been amended.
 
-Source: PwC Guia Fiscal 2026 — IMI/AIMI; AT página AIMI.
+Source: CIMI Art. 135.º-A e seguintes (DRE consolidado); AT página AIMI. Verify the rate brackets and deductions against the current consolidated CIMI before quoting.
 
 ---
 
@@ -91,7 +91,7 @@ Source: PwC Guia Fiscal 2026 — IMI/AIMI; AT página AIMI.
 2. **IMT Jovem ("jovem comprador") — first-home regime, Decreto-Lei n.º 48-D/2024**:
    - **Total IMT and Imposto do Selo exemption** for buyers ≤ **35 years** at the date of acquisition, purchasing their **first** habitação própria e permanente, with the property's value (the higher of price and VPT) not exceeding **€330 539** (2026 — updated from €324 058 in 2025; an OE 2026 +2% adjustment).
    - **Partial exemption** in the next bracket: between **€330 539 and €660 982** (2026), the excess over €330 539 is taxed at the IMT-jovem **8%** rate. Above €660 982: **no exemption**.
-   - **Also exempts emolumentos de registo** of the first acquisition and the associated mortgage (up to the 4th-escalão limit, €330 539 in 2026), per DL 48-D/2024 — a frequently-missed additional saving.
+   - **Also exempts emolumentos de registo** of the first acquisition and the associated mortgage (up to the IMT-Jovem full-exemption ceiling, €330 539 in 2026), per DL 48-D/2024 — a frequently-missed additional saving.
    - **Eligibility conditions**:
      - Age ≤ 35 at the date of transmission.
      - **Not a dependent** for IRS purposes in the year of the transmission.
