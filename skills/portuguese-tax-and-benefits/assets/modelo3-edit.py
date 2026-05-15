@@ -65,6 +65,17 @@ def fmt_amount(raw):
     return "%.2f" % value
 
 
+def xml_decimal(raw, where):
+    """Parse an amount already stored in the XML, clean error on garbage."""
+    try:
+        return Decimal(raw.strip())
+    except InvalidOperation:
+        raise SystemExit(
+            "error: %s holds a non-numeric amount %r -- the downloaded file "
+            "is malformed; verify it in the Portal." % (where, raw)
+        )
+
+
 def parse_set(spec):
     """Parse a LINE:FIELD=VALUE edit spec into (line_no, field, value)."""
     try:
@@ -93,7 +104,8 @@ def sum_column(lines, field):
     for line in lines:
         el = line.find(q(field))
         if el is not None and el.text and el.text.strip():
-            total += Decimal(el.text.strip())
+            where = 'line %s <%s>' % (line.get("numero", "?"), field)
+            total += xml_decimal(el.text, where)
     return "%.2f" % total
 
 
@@ -181,7 +193,7 @@ def main():
             continue
         stored = (soma_el.text or "").strip()
         computed = sum_column(lines, field)
-        if stored and Decimal(stored) != Decimal(computed):
+        if stored and xml_decimal(stored, soma_tag) != Decimal(computed):
             sys.stderr.write(
                 "warning: input %s is %s but the lines sum to %s. The "
                 "downloaded file is already inconsistent -- verify it in "
