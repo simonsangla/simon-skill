@@ -40,7 +40,7 @@ Several statutory exemptions; the most commonly asked about:
 Exemptions are **not automatic** — most must be requested explicitly via Portal das Finanças (Modelo 1 of IMI) within a deadline after the triggering event (acquisition, occupation as habitual residence, works completion).
 
 ### IMI familiar — per-dependent municipal deduction
-Many *câmaras municipais* opt in to **IMI Familiar**: a fixed-euro deduction per dependent child applied to the IMI bill of the HPP. The standard schedule (where adopted): **€30 / €70 / €140** for 1 / 2 / 3+ dependents. Eligibility requires the agregado familiar to be correctly registered in Portal das Finanças by **15 February** of the year of payment. Adoption is at the câmara's discretion; verify on the câmara's deliberation for the year.
+Many *câmaras municipais* opt in to **IMI Familiar**: a fixed-euro deduction per dependent child applied to the IMI bill of the HPP. The standard schedule (where adopted): **€30 / €70 / €140** for 1 / 2 / 3+ dependents — the statutory per-dependent maxima under **Art. 112.º-A CIMI** (date not displayed; verify the current amounts against CIMI consolidated on DRE). Eligibility requires the agregado familiar to be correctly registered in Portal das Finanças by **15 February** of the year of payment. Adoption is at the câmara's discretion; verify on the câmara's deliberation for the year.
 
 ### IMI rate bands 2026
 - **Urban**: municipal choice within **0,3% to 0,45%** (Art. 112.º CIMI).
