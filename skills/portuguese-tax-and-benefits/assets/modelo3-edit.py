@@ -6,9 +6,9 @@ references/modelo3-xml.md for the full workflow and the rules this script
 enforces.
 
 Scope: edits the income-value fields inside AnexoA / Quadro 04 only
-(Rendimentos, Retencoes, Contribuicoes, Quotizacoes), recomputes the
-Quadro-04 column totals SomaC01..C04, and validates the result against the
-official Modelo3IRSv2026 XSD using xmllint.
+(Rendimentos, Retencoes, Contribuicoes, RetSobretaxa, Quotizacoes),
+recomputes the Quadro-04 column totals SomaC01..C05, and validates the
+result against the official Modelo3IRSv2026 XSD using xmllint.
 
 It does NOT compute tax, does NOT touch any other anexo, and does NOT invent
 values -- it only moves the values passed on the command line. For any other
@@ -34,13 +34,16 @@ NS = "http://www.dgci.gov.pt/2009/Modelo3IRSv2026"
 XSI_NS = "http://www.w3.org/2001/XMLSchema-instance"
 ROOT_TAG = "Modelo3IRSv2026"
 
-# Verified empirically against a real declaration file: each editable
-# per-line field maps to one Quadro-04 column total.
+# Each editable per-line field maps to one Quadro-04 column total, in the
+# child-element order fixed by the Modelo3IRS XSD (AnexoAq04AT01-Linha
+# sequence) and the Anexo A column instructions of Portaria 104/2026/1.
+# RetSobretaxa (C04) applies only to income years 2015-2017.
 FIELD_TO_SOMA = {
     "Rendimentos": "AnexoAq04AT01SomaC01",
     "Retencoes": "AnexoAq04AT01SomaC02",
     "Contribuicoes": "AnexoAq04AT01SomaC03",
-    "Quotizacoes": "AnexoAq04AT01SomaC04",
+    "RetSobretaxa": "AnexoAq04AT01SomaC04",
+    "Quotizacoes": "AnexoAq04AT01SomaC05",
 }
 EDITABLE_FIELDS = tuple(FIELD_TO_SOMA)
 
@@ -219,12 +222,6 @@ def main():
         if old != new:
             soma_el.text = new
             changes.append(("%s (recomputed)" % soma_tag, old, new))
-
-    if quadro.find(q("AnexoAq04AT01SomaC05")) is not None:
-        sys.stderr.write("note: SomaC05 was left unchanged -- this script "
-                         "has no verified mapping for it. If your edit "
-                         "affects a C05 field, verify via the Portal "
-                         "import.\n")
 
     print("Changes:")
     for desc, old, new in changes:
