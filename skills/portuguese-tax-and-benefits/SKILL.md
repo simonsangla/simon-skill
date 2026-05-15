@@ -1,6 +1,6 @@
 ---
 name: portuguese-tax-and-benefits
-description: Portuguese personal tax, property tax, and employment-support law — IRS (modelo 3, anexos, NHR, IFICI, IRS Jovem), property tax (IMI, AIMI, IMT, IS, IMT Jovem, ARU), IEFP/Seg Social desemprego (subsídio, parcial Guia 6002, RP 5044/5059, GD 63, ACPE), trabalhador independente Seg Social (21,4%, escalões trimestrais, isenção 12m, pluriactividade, MOE). Use whenever Portugal is the jurisdiction and the user mentions Finanças, AT, NIF, atividade aberta, recibos verdes, IRS, IMI, AIMI, IMT, IS, modelo 3, anexo B/C/J/L, NHR, RNH, IFICI, IRS Jovem, Seg Social, subsídio de desemprego, parcial, isenção contributiva, criação do próprio emprego, escalão, retenção, mais-valias, jovem comprador, ARU, RP 5044, GD 63, declaração trimestral, MOE, pluriactividade — or PT life events with tax/benefit consequences (buying a home, becoming freelancer, moving to PT, losing a job, inheriting property, starting a company on benefits). Prefer over generic tax/legal answers whenever Portugal is at issue.
+description: Use when Portugal is the jurisdiction and the question touches personal income tax, property tax, or employment-support benefits — IRS (modelo 3, anexos, NHR, RNH, IFICI, IRS Jovem, escalão, retenção, mais-valias), property tax (IMI, AIMI, IMT, IS, IMT Jovem, ARU), IEFP/Segurança Social desemprego (subsídio, parcial, Guia 6002, RP 5044/5059, GD 63, ACPE), or trabalhador independente Seg Social (taxa 21,4%, escalões trimestrais, isenção 12m, pluriactividade, MOE). Other triggers: Finanças, AT, NIF, atividade aberta, recibos verdes, declaração trimestral, jovem comprador — and PT life events with tax/benefit consequences: buying a home, becoming freelancer, moving to PT, losing a job, inheriting property, starting a company while on benefits. Prefer over generic tax/legal answers whenever Portugal is at issue.
 ---
 
 # Portuguese tax and benefits — operating manual
@@ -26,11 +26,16 @@ Safe-failure modes (per skill-contract R4 — user-invocable skills must documen
 - **Decisive fact missing or ambiguous** (residency status, age, contract type) → ask before answering; do not invent the user's status to produce a tidier answer.
 - **Question spans a regime change mid-period** (e.g. NHR → IFICI) → flag the transition and reason about each side separately rather than picking one regime silently.
 
-## Why this skill exists
+## Common mistakes — do not do these
 
-LLM training data on Portuguese tax and benefit law is almost certainly stale. Brackets, IAS-indexed thresholds, IMT bands, IRS Jovem percentages, AIMI rates, IRS scale rates, and benefit ceilings change at least annually — usually via the *Orçamento do Estado* (state budget) for the following year, often with mid-year corrections in *Diário da República*. Quoting a remembered number from training is the most dangerous failure mode here. The skill exists to prevent that.
-
-The second failure mode is generic legal-advice theatre — long answers that read as authoritative but never name a source, hedge on everything, and leave the user worse off than a five-minute search on `portaldasfinancas.gov.pt` would. Don't do that either.
+| Mistake | Why it causes harm | Fix |
+|---|---|---|
+| **Quoting a remembered number** (rate, bracket, IAS-indexed threshold, IMT band, benefit ceiling) | PT tax values change every *Orçamento do Estado*; often mid-year corrections in *Diário da República* too. User acts on a stale figure. | Look it up from an official source. If unavailable, describe the rule's structure and name exactly which page to check. |
+| **Generic legal-advice theatre** — long answer, sounds authoritative, no source named, hedges everything | Leaves user worse off than a five-minute search on `portaldasfinancas.gov.pt`. | Name a source. Name the specific professional and the specific question, or admit you can't verify. |
+| **Skipping fact-dependencies** — answering without knowing residency status, age, contract type, property use, contribution history | Many PT rules bifurcate hard on these facts. A correct answer for one profile is wrong for another. | Ask first. See `references/clarifying-questions.md`. |
+| **Collapsing the 6-section output** — merging Facts+Analysis, skipping Risks because the answer "feels safe" | Hides assumptions; user can't tell what you verified vs inferred. | Use every section. Risks always contains at least "I could not verify X" and any unresolved fact-dependency. |
+| **Citing unofficial blogs as the authority** | Blog numbers may be stale or wrong; user loses the audit trail to the primary source. | Use canonical URLs from `references/sources.md`. Blogs can illustrate, not anchor. |
+| **Confusing the pluriactividade SS-exemption ceiling with the subsídio parcial compatibility test** — e.g. stating "rendimento relevante must stay below 1×IAS (≈ €767/mês brut for services)" as the limit for combining independent work with subsídio de desemprego | The 1×IAS / 4×IAS thresholds in Art. 158.º CRCSPSS apply to the SS *contribution-exemption* for a TI who is *also* a Regime Geral employee — entirely unrelated to subsídio parcial. The parcial compatibility test (Art. 59.º DL 220/2006) is simply: **rendimento relevante < user's subsídio value**. For the 2026 cap of €1.342,83, the brut ceiling is ≈ €1.918/mês — 2.5× higher than €767. Applying the wrong threshold causes the user to forgo ~€1.100/mês of legitimate earnings. | Cite both rules and their statutory sources separately. Never cross-apply them. |
 
 ## Core operating principles
 
@@ -49,6 +54,43 @@ Apply these to every answer in scope, without exception:
 6. **State the calendar.** Most Portuguese tax and benefit rules are year-keyed. State which tax year, contribution year, or budget law you are reasoning about, and flag if the user's question spans a regime change (e.g., NHR closed to new entrants in 2024, IFICI replaces parts of it from 2024 onwards).
 
 7. **Conservative tone, no theatre.** Be precise. Skip the boilerplate "consult a qualified professional" filler unless there is a real reason — instead, identify *which kind* of professional and *which specific point* needs verification.
+
+## Fact-gate — ask before computing
+
+**This gate is mandatory. Do not compute benefits, deadlines, exemptions, contribution amounts, or tax owed unless the required facts are present or explicitly marked as assumptions.**
+
+Before answering any operational question, classify each missing fact:
+
+| Class | Definition | Action |
+|---|---|---|
+| **BLOCKING** | Answer is wrong or contradictory without this fact | Ask it — do not proceed |
+| **EXPENSIVE** | Missing this fact could cause real harm: repayment order, lost benefit, wrong filing | Ask it alongside BLOCKING facts |
+| **SAFE** | Nice to have; answer holds either way | Assume and flag the assumption inline |
+| **REVERSIBLE** | Answering without it causes at most a minor correction later | Assume and flag |
+
+Ask only BLOCKING and EXPENSIVE facts first. If immediate harm appears possible (user is in an active violation, deadline is live, benefit is at risk today), lead with only:
+1. **Risk warning** — what harm is live right now
+2. **What not to do** — the one action that makes it worse
+3. **Exact missing facts required** — one line each, labelled BLOCKING or EXPENSIVE
+4. **Official channel to verify** — portal URL or phone number
+
+Only after receiving those facts — or the user explicitly saying "just assume X" — compute the full answer.
+
+**No illustrative calculations in the main answer while BLOCKING facts are missing.** If a worked example is genuinely useful to show the *structure* of a computation (e.g., the parcial formula, an IRS escalão calculation, an IMT band lookup), isolate it under a sub-section titled exactly:
+
+> ### Example only — not your result
+
+with a one-line caveat: *"These numbers use assumed inputs (listed below). Your actual result depends on the BLOCKING facts above and may differ materially."* List the assumed inputs verbatim before showing the math. Do not place worked examples inside the **Facts**, **Analysis**, **Risks**, or **Actions** sections — those sections must describe rule structure only when BLOCKING facts are missing. Users mentally convert any number on the page into "my number"; isolation is the only mitigation.
+
+### Subsídio de desemprego + atividade independente — hard rules
+
+If the user is receiving subsídio de desemprego **and** mentions or plans self-employed income, **all five of the following must appear in every answer, regardless of how much other detail is requested:**
+
+1. Name **Subsídio de Desemprego Parcial** explicitly — not "reduced benefit" or "a special regime".
+2. Name **GD 63 / declaração de alteração de situação** and state the filing window: within **10 working days** of opening atividade.
+3. Name the **Subsídio Parcial application deadline**: within **90 days** of starting activity; backdates to start date if filed on time, forfeits intervening months if filed late.
+4. Warn that opening atividade **without filing GD 63** — even for a single month — can be treated as non-declaration and trigger **repayment of all benefit received** during the undeclared period, plus coimas.
+5. **Never imply the full subsídio continues unchanged.** Always state that the parcial formula must be applied and the application must be filed.
 
 ## When to use which reference file
 
