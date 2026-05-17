@@ -1,0 +1,29 @@
+{
+  "skill_name": "portuguese-tax-and-benefits",
+  "evals": [
+    {
+      "id": 0,
+      "name": "irs-ifici-french-saas-newcomer",
+      "prompt": "I moved to Portugal in mid-2024 from France to build a SaaS analytics tool. I'm registered for IRS but haven't opened atividade yet. Friends keep telling me to apply for NHR but a tax firm said it's closed and I should look at IFICI instead. Can you walk me through whether I'm eligible for either, what the difference actually is, and what I'd file in my first annual declaration if I open atividade later this year for a tech consulting / SaaS business?",
+      "expected_output": "A 6-section answer (Facts / Analysis / Risks / Actions / Documents needed / Source links). Must acknowledge NHR closure to new entrants from 2024 (with transitional caveat), describe IFICI structure and that eligibility hinges on qualifying activities listed in a portaria, ask or assume residency-establishment date, flag that the IFICI activity list must be verified before claiming eligibility, walk through Categoria B regime simplificado vs contabilidade organizada, mention Anexo B / Anexo L, mention IVA Article 53.º consideration, and cite portaldasfinancas.gov.pt and DRE for the diplomas. Must NOT invent specific brackets, NHR-style 20% rates, IFICI percentages, or activity-list contents.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 1,
+      "name": "imt-young-buyer-first-home-lisbon",
+      "prompt": "I'm 34, French citizen, tax resident in Portugal since 2024. I want to buy my first permanent residence in Lisbon for around €350,000. I keep reading about a young-buyer regime exempting IMT and stamp duty but I'm not sure if I qualify because the price seems high and I'm right at the age cutoff. Can you tell me what would apply, what I'd actually pay in IMT/IS at €350k vs under a possible exemption, and what I need to file before the deed?",
+      "expected_output": "A 6-section answer. Must describe the structure of IMT (progressive on habitação própria base, higher table for secondary residence), Imposto do Selo at 0.8% on transfers historically (qualified), the existence of the jovem-comprador exemption (IMT + IS), the value-ceiling and age-ceiling tests, the requirement of being a *first* permanent residence and the claw-back risk if vacated within a holding window. MUST acknowledge that current age-ceiling and value-ceiling figures need verification on AT. MUST list Modelo 1 IMT and other pre-deed documents. Should NOT compute a specific IMT euro figure without explicit hedging that brackets are pulled from the current AT table.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "iefp-segsocial-freelance-compatibility-acpe",
+      "prompt": "I'm currently registered as desempregado at IEFP and receiving subsídio de desemprego, but I'm building a SaaS product and a French client just offered me a one-off €2,000 consulting engagement. I haven't opened atividade yet. What's the cleanest way to handle this — can I take the engagement without losing my benefit, do I need to open atividade, should I be considering Apoio à Criação do Próprio Emprego instead, and what do I file where and when?",
+      "expected_output": "A 6-section answer. Must explain default incompatibility of atividade aberta with subsídio de desemprego, describe the IAS-multiple compatibility ceiling without inventing the euro figure, lay out the proactive-declaration posture (Seg Social Direta), explain ACPE as the structured path to convert remaining benefit into business capital, flag cross-border / EU-coordination consideration for the French client (Reg 883/2004 reference acceptable), enumerate concrete actions (talk to gestor IEFP, file declaração de alteração at Seg Social, decide ACPE vs partial atividade, etc.), and cite DRE consolidated DL 220/2006 and Seg Social guias práticos.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

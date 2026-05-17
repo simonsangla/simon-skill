@@ -182,6 +182,8 @@ In both configurations:
 - For independent activity: the **rendimento relevante** is computed as **70% of services rendered** or **20% of merchandise sales / hotelaria-restauração-bebidas**, divided by 12 — same coefficients as for Seg Social contributions but **annualised** and **monthlyised** for the parcial test.
 - The regime **excludes**: trabalhadores independentes economicamente dependentes (single-client > 50%), TI with atividade empresarial, gerentes / administradores of pessoas coletivas. They have separate subsídio paths.
 
+> **Do not confuse with the pluriactividade SS-contribution-exemption ceiling.** Art. 158.º CRCSPSS exempts a TI who is *also* a Regime Geral employee from SS contributions when their rendimento relevante ≤ 4×IAS. A narrower sub-case sometimes quoted is "1×IAS ≈ €537/mês rendimento relevante ≈ €767/mês brut for services". Neither figure is the subsídio parcial compatibility test. The parcial test is: **rendimento relevante < the user's subsídio de desemprego value**. For the 2026 benefit ceiling of €1.342,83, this means brut services receipts must stay below ≈ €1.918/mês — not €537 or €767. Applying the wrong threshold causes the user to unnecessarily cap earnings at ~40% of what the law permits. Statutory source: Art. 59.º DL 220/2006; Art. 158.º CRCSPSS.
+
 ### The formula (Seg Social administrative reading)
 > **Valor a receber = (Subsídio de Desemprego + 0,35 × Subsídio de Desemprego) − rendimento mensal do trabalho parcial**
 
